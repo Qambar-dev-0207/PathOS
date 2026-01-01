@@ -1,0 +1,131 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { ArrowLeft, Disc, Loader2, UserPlus, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { motion } from "framer-motion";
+
+export default function RegisterPage() {
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:8002/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.detail || "Registration failed");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("accessToken", data.access_token);
+      window.location.href = "/profile";
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-white flex flex-col noise-bg">
+      <header className="p-8 flex justify-between items-center z-50">
+        <Link href="/">
+          <Button variant="ghost" className="pl-0 hover:bg-transparent text-zinc-500 hover:text-white">
+            <ArrowLeft className="mr-2 w-4 h-4" /> RETURN
+          </Button>
+        </Link>
+        <Disc className="w-6 h-6 animate-spin" />
+      </header>
+
+      <main className="flex-1 flex flex-col items-center justify-center p-6 sm:p-12 relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md space-y-12"
+        >
+          <div className="text-center space-y-4">
+            <h1 className="text-5xl font-bold tracking-tighter uppercase">Request_Access</h1>
+            <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">
+              Initialize your operator profile
+            </p>
+          </div>
+
+          <form onSubmit={handleRegister} className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Full Name</label>
+              <Input 
+                placeholder="John Doe" 
+                value={formData.name}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                required
+                className="bg-transparent border-white/10 focus:border-white h-14"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Identity (Email)</label>
+              <Input 
+                type="email" 
+                placeholder="operator@system.io" 
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                required
+                className="bg-transparent border-white/10 focus:border-white h-14"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Security Key (Password)</label>
+              <Input 
+                type="password" 
+                placeholder="••••••••" 
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                required
+                className="bg-transparent border-white/10 focus:border-white h-14"
+              />
+            </div>
+
+            <Button 
+              type="submit" 
+              disabled={loading}
+              className="w-full h-16 bg-white text-black hover:bg-zinc-200 text-lg font-bold tracking-widest"
+            >
+              {loading ? <Loader2 className="animate-spin" /> : "INITIALIZE PROFILE"}
+            </Button>
+          </form>
+
+          <div className="bg-zinc-900/50 border border-white/10 p-4 rounded flex items-start gap-4">
+             <ShieldCheck className="w-5 h-5 text-zinc-500 mt-1" />
+             <p className="text-[10px] font-mono text-zinc-500 uppercase leading-relaxed">
+               All data is encrypted via protocol v2.0. By initializing, you agree to our terms of execution.
+             </p>
+          </div>
+
+          <div className="text-center pt-8 border-t border-white/10">
+            <p className="text-zinc-500 text-sm">
+              Already an Operator?{" "}
+              <Link href="/login" className="text-white hover:underline underline-offset-4 font-bold uppercase tracking-widest text-xs">
+                Login
+              </Link>
+            </p>
+          </div>
+        </motion.div>
+      </main>
+    </div>
+  );
+}
