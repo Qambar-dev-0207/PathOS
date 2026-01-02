@@ -83,6 +83,13 @@ export default function ProfilePage() {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 
+                if (userRes.status === 401) {
+                    localStorage.removeItem("accessToken");
+                    localStorage.removeItem("generatedRoadmap");
+                    router.push("/login");
+                    return;
+                }
+
                 if (!userRes.ok) throw new Error("Auth failed");
                 const userData = await userRes.json();
                 setUser(userData);
@@ -90,6 +97,13 @@ export default function ProfilePage() {
                 const roadmapRes = await fetch("https://pathos.onrender.com/roadmap", {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
+
+                if (roadmapRes.status === 401) {
+                    localStorage.removeItem("accessToken");
+                    localStorage.removeItem("generatedRoadmap");
+                    router.push("/login");
+                    return;
+                }
 
                 if (roadmapRes.ok) {
                     setHasRoadmap(true);

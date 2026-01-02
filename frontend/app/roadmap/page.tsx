@@ -45,6 +45,14 @@ export default function RoadmapPage() {
         const userRes = await fetch("https://pathos.onrender.com/auth/me", {
             headers: { "Authorization": `Bearer ${token}` }
         });
+
+        if (userRes.status === 401) {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("generatedRoadmap");
+            router.push("/login");
+            return;
+        }
+
         if (userRes.ok) {
             setUser(await userRes.json());
         }
