@@ -20,33 +20,52 @@ export default function AboutPage() {
         </Link>
       </header>
 
-      <main className="max-w-4xl mx-auto w-full relative z-10 space-y-24 pb-32">
+      <main className="max-w-6xl mx-auto w-full relative z-10 space-y-24 pb-32">
         {/* Profile Hero */}
-        <section className="space-y-8">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/20 bg-amber-500/5 text-amber-500 text-[10px] tracking-[0.2em] uppercase"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-            </span>
-            System Architect Identified
-          </motion.div>
+        <section className="flex flex-col md:flex-row gap-12 items-start justify-between">
+          <div className="flex-1 space-y-8">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/20 bg-amber-500/5 text-amber-500 text-[10px] tracking-[0.2em] uppercase"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+              </span>
+              System Architect Identified
+            </motion.div>
 
-          <div className="space-y-4">
-            <h1 className="text-6xl md:text-8xl font-bold tracking-tighter uppercase leading-none">
-              MOHAMMED <span className="text-zinc-800 outline-text">QAMBAR</span>
-            </h1>
-            <h2 className="text-xl md:text-2xl text-amber-500 font-bold tracking-widest uppercase flex items-center gap-3">
-              <Terminal className="w-6 h-6" /> AI ENGINEER // ML DEVELOPER
-            </h2>
+            <div className="space-y-4">
+              <h1 className="text-6xl md:text-8xl font-bold tracking-tighter uppercase leading-none">
+                MOHAMMED <span className="text-zinc-800 outline-text">QAMBAR</span>
+              </h1>
+              <h2 className="text-xl md:text-2xl text-amber-500 font-bold tracking-widest uppercase flex items-center gap-3">
+                <Terminal className="w-6 h-6" /> AI ENGINEER // ML DEVELOPER
+              </h2>
+            </div>
+
+            <p className="text-lg md:text-xl text-zinc-400 leading-relaxed max-w-2xl font-sans">
+              Aspiring AI Engineer with hands-on experience in building intelligent systems, automation workflows, and full-stack AI applications. Skilled in Python, computer vision, deep learning, backend engineering, and browser automation.
+            </p>
           </div>
 
-          <p className="text-lg md:text-xl text-zinc-400 leading-relaxed max-w-2xl font-sans">
-            Aspiring Machine Learning and XR Developer with hands-on experience in building intelligent systems, automation workflows, and full-stack AI applications. Skilled in Python, computer vision, deep learning, backend engineering, and browser automation.
-          </p>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="relative w-64 h-80 flex-shrink-0"
+          >
+             <div className="absolute inset-0 border-2 border-amber-500/30 translate-x-3 translate-y-3 -z-10" />
+             <div className="absolute inset-0 border border-white/10" />
+             <img 
+               src="/pfp.jpeg" 
+               alt="Mohammed Qambar" 
+               className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+             />
+             <div className="absolute bottom-4 -left-4 bg-amber-500 text-black px-2 py-1 text-[10px] font-bold uppercase tracking-tighter">
+                ID_0207_SECURE
+             </div>
+          </motion.div>
         </section>
 
         {/* Technical Stack */}
