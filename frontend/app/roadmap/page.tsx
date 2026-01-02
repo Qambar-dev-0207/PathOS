@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle2, RefreshCw, ArrowUpRight, Target, Clock, Terminal, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,9 +30,10 @@ export default function RoadmapPage() {
   const router = useRouter();
   const [data, setData] = useState<RoadmapData | null>(null);
   const [selectedStep, setSelectedStep] = useState<RoadmapStep | null>(null);
+  const [user, setUser] = useState<{ id: string, name: string } | null>(null);
 
   useEffect(() => {
-    const fetchRoadmap = async () => {
+    const fetchInitialData = async () => {
       const token = localStorage.getItem("accessToken");
       if (!token) {
         router.push("/login");
@@ -39,6 +41,14 @@ export default function RoadmapPage() {
       }
 
       try {
+        // Fetch User Info
+        const userRes = await fetch("http://localhost:8002/auth/me", {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (userRes.ok) {
+            setUser(await userRes.json());
+        }
+
         const res = await fetch("http://localhost:8002/roadmap", {
           headers: { "Authorization": `Bearer ${token}` }
         });
@@ -84,7 +94,7 @@ export default function RoadmapPage() {
     };
     
     if (typeof window !== "undefined") {
-      fetchRoadmap();
+      fetchInitialData();
     }
   }, [router]);
 
@@ -145,6 +155,13 @@ export default function RoadmapPage() {
         </div>
         
         <div className="flex items-center gap-6">
+          {user && (
+            <Link href={`/u/${user.id}`} target="_blank">
+                <Button variant="outline" size="sm" className="hidden lg:flex font-mono text-[10px] h-8 border-white/10 text-zinc-500 hover:text-white hover:border-white/30">
+                    VIEW PUBLIC PROFILE <ArrowUpRight className="ml-2 w-3 h-3" />
+                </Button>
+            </Link>
+          )}
           <div className="hidden md:flex items-center gap-2 text-xs font-mono uppercase text-zinc-500">
              <Clock className="w-3 h-3" />
              <span>Est. Completion: 12 Weeks</span>

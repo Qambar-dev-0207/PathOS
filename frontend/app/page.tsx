@@ -227,10 +227,16 @@ export default function Home() {
 
 function Header() {
     const [scrolled, setScrolled] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 50);
         window.addEventListener("scroll", handleScroll);
+        
+        // Check Auth
+        const token = localStorage.getItem("accessToken");
+        if (token) setIsAuthenticated(true);
+
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
@@ -265,16 +271,26 @@ function Header() {
             </Link>
           </nav>
           <div className="flex gap-4 items-center">
-            <Link href="/login" className="pointer-events-auto">
-                <Button variant="ghost" size="sm" className="font-mono text-xs h-9 hover:bg-white hover:text-black transition-all duration-300 uppercase tracking-widest">
-                Login
-                </Button>
-            </Link>
-            <Link href="/register" className="pointer-events-auto hidden sm:block">
-                <Button data-cursor="emerald" variant="outline" size="sm" className="font-mono text-xs h-9 bg-white text-black border-transparent hover:bg-amber-400 hover:text-black transition-all duration-300 uppercase tracking-widest font-bold">
-                Get Started
-                </Button>
-            </Link>
+            {isAuthenticated ? (
+                <Link href="/profile" className="pointer-events-auto">
+                    <Button variant="outline" size="sm" className="font-mono text-xs h-9 bg-white text-black border-transparent hover:bg-amber-400 hover:text-black transition-all duration-300 uppercase tracking-widest font-bold">
+                    Dashboard
+                    </Button>
+                </Link>
+            ) : (
+                <>
+                    <Link href="/login" className="pointer-events-auto">
+                        <Button variant="ghost" size="sm" className="font-mono text-xs h-9 hover:bg-white hover:text-black transition-all duration-300 uppercase tracking-widest">
+                        Login
+                        </Button>
+                    </Link>
+                    <Link href="/register" className="pointer-events-auto hidden sm:block">
+                        <Button data-cursor="emerald" variant="outline" size="sm" className="font-mono text-xs h-9 bg-white text-black border-transparent hover:bg-amber-400 hover:text-black transition-all duration-300 uppercase tracking-widest font-bold">
+                        Get Started
+                        </Button>
+                    </Link>
+                </>
+            )}
           </div>
         </div>
       </header>

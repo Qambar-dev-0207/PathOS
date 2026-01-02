@@ -6,6 +6,7 @@ import os
 import json
 import re
 from datetime import datetime, timedelta
+from bson import ObjectId
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -175,9 +176,10 @@ async def register(user: UserCreate):
         if any(u['email'] == user.email for u in MOCK_USERS):
              raise HTTPException(status_code=400, detail="Email already registered (Mock)")
         MOCK_USERS.append(new_user)
-        log_debug("User created in Mock Storage Fallback")
-        
-    access_token = create_access_token(data={"sub": user.email})
+    access_token = create_access_token(
+        data={"sub": user.email},
+        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/login", response_model=Token)
@@ -211,7 +213,10 @@ async def login(user: UserLogin):
         )
     
     log_debug("Login successful. Generating token.")
-    access_token = create_access_token(data={"sub": user.email})
+    access_token = create_access_token(
+        data={"sub": user.email},
+        expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/generate-roadmap", response_model=Roadmap)
@@ -445,3 +450,69 @@ def generate_mock_roadmap(profile: UserProfile) -> Roadmap:
         ]))
 
     return Roadmap(role=role, steps=steps)
+
+@app.get('/public/profile/{user_id}')
+async def get_public_profile(user_id: str):
+    user = None
+    roadmap = None
+
+    # Handle 'demo' special case
+    if user_id == 'demo':
+        user = next((u for u in MOCK_USERS if u['email'] == 'demo@pathos.dev'), None)
+        if user:
+             roadmap = MOCK_ROADMAPS.get('demo@pathos.dev')
+             # If no roadmap for demo yet, gen one? No, just return empty.
+    
+    # Try MongoDB
+    if not user and ObjectId.is_valid(user_id):
+        try:
+            user = await db.users.find_one({'_id': ObjectId(user_id)})
+        except Exception as e:
+            print(f'DB Error: {e}')
+    
+    if not user:
+        raise HTTPException(status_code=404, detail='User not found')
+
+    # Get Roadmap
+    try:
+        roadmap = await db.roadmaps.find_one({'user_email': user['email']})
+    except:
+        pass
+    
+    if not roadmap:
+        # Check Mock
+        roadmap = MOCK_ROADMAPS.get(user['email'])
+
+    # Calculate Stats
+    total_steps = 0
+    completed_steps = 0
+    role = 'Undecided'
+    
+    if roadmap:
+        role = roadmap.get('role', 'Undecided')
+        steps = roadmap.get('steps', [])
+        total_steps = len(steps)
+        completed_steps = sum(1 for s in steps if s.get('completed', False))
+
+    return {
+        'name': user.get('name', 'Anonymous'),
+        'role': role,
+        'stats': {
+            'total': total_steps,
+            'completed': completed_steps,
+            'percent': int((completed_steps / total_steps * 100) if total_steps > 0 else 0)
+        },
+        'roadmap': roadmap  # Return full roadmap for the timeline view
+    }
+
+
+
+@app.get('/auth/me')
+async def get_me(current_user: dict = Depends(get_current_user)):
+    # Returns the logged in user info
+    return {
+        'id': str(current_user.get('_id', 'demo')),
+        'name': current_user.get('name'),
+        'email': current_user.get('email')
+    }
+
