@@ -79,7 +79,7 @@ export default function ProfilePage() {
             }
 
             try {
-                const userRes = await fetch("http://localhost:8002/auth/me", {
+                const userRes = await fetch("https://pathos.onrender.com/auth/me", {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 
@@ -87,7 +87,7 @@ export default function ProfilePage() {
                 const userData = await userRes.json();
                 setUser(userData);
 
-                const roadmapRes = await fetch("http://localhost:8002/roadmap", {
+                const roadmapRes = await fetch("https://pathos.onrender.com/roadmap", {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
 
@@ -291,7 +291,7 @@ function OnboardingWizard() {
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), 120000); 
 
-      const response = await fetch("http://localhost:8002/generate-roadmap", {
+      const response = await fetch("https://pathos.onrender.com/generate-roadmap", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

@@ -29,7 +29,7 @@ export default function PublicProfilePage() {
   useEffect(() => {
     if (!userId) return;
 
-    fetch(`http://localhost:8002/public/profile/${userId}`)
+    fetch(`https://pathos.onrender.com/public/profile/${userId}`)
       .then(async (res) => {
         if (!res.ok) throw new Error("Operator not found");
         return res.json();
