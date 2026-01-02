@@ -163,11 +163,13 @@ MOCK_USERS = [
 MOCK_ROADMAPS = {}
 
 def log_debug(msg):
+    # Always print to stdout for Render logs
+    print(f"[{datetime.utcnow()}] {msg}")
     try:
         with open("debug_auth.log", "a") as f:
             f.write(f"[{datetime.utcnow()}] {msg}\n")
     except:
-        print(msg)
+        pass
 
 # ... (rest of configuration)
 
