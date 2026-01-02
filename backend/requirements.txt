@@ -12,3 +12,4 @@ email-validator
 bcrypt==4.0.1
 google-generativeai
 duckduckgo-search
+certifi
