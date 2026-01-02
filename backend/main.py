@@ -126,6 +126,28 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 def read_root():
     return {"message": "AI Career Roadmap Generator API"}
 
+@app.get("/health")
+async def health_check():
+    from database import USE_MOCK_DB, MONGODB_URL
+    db_type = "Mock" if USE_MOCK_DB else "MongoDB"
+    masked_url = MONGODB_URL[:15] + "..." if MONGODB_URL else "None"
+    
+    db_status = "Connected"
+    if not USE_MOCK_DB:
+        try:
+            # Check if we can reach the DB
+            await db.command("ping")
+        except Exception as e:
+            db_status = f"Error: {str(e)}"
+
+    return {
+        "status": "online",
+        "database": db_type,
+        "database_url": masked_url,
+        "database_status": db_status,
+        "openrouter_key_set": bool(OPENROUTER_API_KEY)
+    }
+
 # ... imports
 
 # --- Mock Storage (Fallback) ---
