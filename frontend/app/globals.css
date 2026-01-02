@@ -70,6 +70,12 @@ body {
   overflow-x: hidden;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  body, a, button, input, textarea, select {
+    cursor: none !important;
+  }
+}
+
 /* Custom Utilities */
 @layer utilities {
   .glass-panel {
@@ -98,5 +104,16 @@ body {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 50;
+  }
+
+  /* Typography Effects */
+  .stroke-text {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
+    color: transparent;
+  }
+  
+  .stroke-text-bold {
+    -webkit-text-stroke: 2px rgba(255, 255, 255, 0.8);
+    color: transparent;
   }
 }

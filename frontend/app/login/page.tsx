@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft, Disc, Loader2, ArrowRight } from "lucide-react";
+import { ArrowLeft, Disc, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
+import { BaryonLoader } from "@/components/ui/baryon-loader";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -89,8 +90,14 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full h-16 bg-white text-black hover:bg-zinc-200 text-lg font-bold tracking-widest"
             >
-              {loading ? <Loader2 className="animate-spin" /> : "AUTHENTICATE"}
+              {loading ? <BaryonLoader /> : "AUTHENTICATE"}
             </Button>
+            
+            <div className="text-center">
+                <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">
+                    Debug Access: <span className="text-zinc-400 select-all">demo@pathos.dev</span> // <span className="text-zinc-400 select-all">password</span>
+                </p>
+            </div>
           </form>
 
           <div className="text-center pt-8 border-t border-white/10">

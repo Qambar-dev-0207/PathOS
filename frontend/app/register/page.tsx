@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft, Disc, Loader2, UserPlus, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Disc, UserPlus, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
+import { BaryonLoader } from "@/components/ui/baryon-loader";
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
@@ -105,7 +106,7 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full h-16 bg-white text-black hover:bg-zinc-200 text-lg font-bold tracking-widest"
             >
-              {loading ? <Loader2 className="animate-spin" /> : "INITIALIZE PROFILE"}
+              {loading ? <BaryonLoader /> : "INITIALIZE PROFILE"}
             </Button>
           </form>
 

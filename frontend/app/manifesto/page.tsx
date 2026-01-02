@@ -37,19 +37,19 @@ export default function ManifestoPage() {
               Most career advice is noise. It's designed to keep you comfortable, not wealthy. It tells you to "follow your passion" while ignoring market realities. It encourages broad learning when depth is what commands a premium.
             </p>
             <p>
-              <strong className="text-white">We built Career_OS to cut the noise.</strong>
+              <strong className="text-white">We built PathOS to cut the noise.</strong>
             </p>
             <p>
               This isn't a course. It's a weapon. We reverse-engineer the specific requirements of high-paying roles and build a bridge backward to where you stand today. Every week is a sprint. Every resource is vetted. Every milestone is a step closer to leverage.
             </p>
             <p>
               We believe in:
-              <ul className="list-disc pl-6 space-y-2 mt-4 marker:text-white">
+            </p>
+            <ul className="list-disc pl-6 space-y-2 mt-4 marker:text-white">
                 <li><strong className="text-white">Outcome over Output:</strong> Don't just learn. Build.</li>
                 <li><strong className="text-white">Market Reality:</strong> Align with what pays, not just what's popular.</li>
                 <li><strong className="text-white">Speed of Execution:</strong> The faster you fail, the faster you win.</li>
-              </ul>
-            </p>
+            </ul>
           </div>
 
           <div className="pt-12 border-t border-white/10">

@@ -4,9 +4,10 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, ArrowLeft, Loader2, Disc, Command } from "lucide-react";
+import { ArrowRight, ArrowLeft, Disc, Command } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { BaryonLoader } from "@/components/ui/baryon-loader";
 
 interface UserProfile {
   target_role: string;
@@ -70,6 +71,9 @@ export default function ProfileWizard() {
   const currentQ = QUESTIONS[currentQIndex];
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Safety guard: If index goes out of bounds (race condition), don't render
+  if (!currentQ) return null;
+
   useEffect(() => {
     // Auto focus on slide change
     setTimeout(() => inputRef.current?.focus(), 500);
@@ -77,7 +81,10 @@ export default function ProfileWizard() {
 
   const handleNext = () => {
     if (currentQIndex < QUESTIONS.length - 1) {
-      setCurrentQIndex(prev => prev + 1);
+      // Use direct value setting instead of functional update (prev => prev + 1)
+      // to prevent race conditions where rapid keypresses increment the index
+      // beyond the bounds checked in the if-condition above.
+      setCurrentQIndex(currentQIndex + 1);
     } else {
       handleSubmit();
     }
@@ -85,7 +92,7 @@ export default function ProfileWizard() {
 
   const handleBack = () => {
     if (currentQIndex > 0) {
-      setCurrentQIndex(prev => prev - 1);
+      setCurrentQIndex(currentQIndex - 1);
     }
   };
 
@@ -101,9 +108,6 @@ export default function ProfileWizard() {
     
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     
-    // Fallback: If no token, allow generation as guest (backend falls back to mock if no token, but we should force login for this flow based on earlier request)
-    // Actually, for better UX, let's allow guest generation but with mock data if we wanted, 
-    // BUT the user specifically asked for DB storage. So let's redirect to login.
     if (!token) {
       alert("Session expired. Please login.");
       router.push("/login");
@@ -123,7 +127,7 @@ export default function ProfileWizard() {
     try {
       // Add a timeout to the fetch
       const controller = new AbortController();
-      const id = setTimeout(() => controller.abort(), 120000); // 120 second timeout for reasoning model
+      const id = setTimeout(() => controller.abort(), 120000); 
 
       console.log("Sending payload:", payload);
 
@@ -245,7 +249,7 @@ export default function ProfileWizard() {
                    className="h-16 px-8 bg-white text-black hover:bg-zinc-200 rounded-none text-lg tracking-widest font-bold"
                  >
                    {loading ? (
-                     <Loader2 className="animate-spin w-5 h-5" />
+                     <BaryonLoader />
                    ) : (
                      currentQIndex === QUESTIONS.length - 1 ? "INITIALIZE" : "NEXT"
                    )}

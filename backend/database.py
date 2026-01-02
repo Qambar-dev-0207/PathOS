@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MONGODB_URL = os.getenv("MONGODB_URL")
-USE_MOCK_DB = os.getenv("USE_MOCK_DB", "false").lower() == "true"
+USE_MOCK_DB_ENV = os.getenv("USE_MOCK_DB", "false").lower() == "true"
+# Use mock if explicitly requested OR if no MongoDB URL is provided
+USE_MOCK_DB = USE_MOCK_DB_ENV or not MONGODB_URL
 
 class MockCollection:
     def __init__(self):

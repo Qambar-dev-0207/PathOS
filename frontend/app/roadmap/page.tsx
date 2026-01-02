@@ -259,7 +259,7 @@ export default function RoadmapPage() {
                              >
                                 <div className="flex items-center gap-3 overflow-hidden">
                                    {hasUrl ? (
-                                      <Terminal className="w-4 h-4 text-zinc-500 group-hover:text-emerald-500 transition-colors flex-shrink-0" />
+                                      <Terminal className="w-4 h-4 text-zinc-500 group-hover:text-amber-500 transition-colors flex-shrink-0" />
                                    ) : (
                                       <Search className="w-4 h-4 text-zinc-500 group-hover:text-blue-500 transition-colors flex-shrink-0" />
                                    )}

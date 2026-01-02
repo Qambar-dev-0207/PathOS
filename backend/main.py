@@ -34,8 +34,8 @@ app.add_middleware(
 
 # --- Configuration ---
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
+SECRET_KEY = os.getenv("SECRET_KEY", "fallback_secret_key_for_dev_only")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
 
 # Initialize OpenAI Client for OpenRouter
@@ -128,14 +128,29 @@ def read_root():
 # ... imports
 
 # --- Mock Storage (Fallback) ---
-MOCK_USERS = []
+# Pre-seed a user for easy testing
+default_pwd_hash = pwd_context.hash("password")
+MOCK_USERS = [
+    {
+        "name": "Demo Operator",
+        "email": "demo@pathos.dev",
+        "hashed_password": default_pwd_hash
+    }
+]
 MOCK_ROADMAPS = {}
+
+def log_debug(msg):
+    try:
+        with open("debug_auth.log", "a") as f:
+            f.write(f"[{datetime.utcnow()}] {msg}\n")
+    except:
+        print(msg)
 
 # ... (rest of configuration)
 
 @app.post("/register", response_model=Token)
 async def register(user: UserCreate):
-    print(f"DEBUG: Register attempt for {user.email}")
+    log_debug(f"REGISTER ATTEMPT: {user.email}")
     hashed_password = get_password_hash(user.password)
     new_user = {
         "name": user.name,
@@ -144,37 +159,43 @@ async def register(user: UserCreate):
     }
     
     try:
-        # Try MongoDB
+        # Try MongoDB/MockDB
         existing_user = await db.users.find_one({"email": user.email})
         if existing_user:
-            print("DEBUG: Email already registered (DB)")
+            log_debug("Email already registered (DB)")
             raise HTTPException(status_code=400, detail="Email already registered")
         
         await db.users.insert_one(new_user)
-        print("DEBUG: User created successfully in DB")
+        log_debug("User created successfully in DB")
+    except HTTPException as he:
+        raise he
     except Exception as e:
-        print(f"WARNING: MongoDB failed ({e}). Using Mock Storage.")
-        # Mock Fallback
+        log_debug(f"WARNING: DB insert failed ({e}). Checking Mock List.")
+        # Mock Fallback (Redundant if db IS MockDatabase, but keeping for safety)
         if any(u['email'] == user.email for u in MOCK_USERS):
              raise HTTPException(status_code=400, detail="Email already registered (Mock)")
         MOCK_USERS.append(new_user)
-        print("DEBUG: User created in Mock Storage")
+        log_debug("User created in Mock Storage Fallback")
         
     access_token = create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/login", response_model=Token)
 async def login(user: UserLogin):
-    print(f"DEBUG: Login attempt for {user.email}")
+    log_debug(f"LOGIN ATTEMPT: {user.email}")
     db_user = None
     try:
         db_user = await db.users.find_one({"email": user.email})
     except Exception as e:
-        print(f"WARNING: MongoDB failed ({e}). Checking Mock Storage.")
+         log_debug(f"DB Find failed: {e}")
+
+    # Fallback to MOCK_USERS list if DB returned nothing (or failed)
+    if not db_user:
+        log_debug("User not found in DB, checking MOCK_USERS list...")
         db_user = next((u for u in MOCK_USERS if u["email"] == user.email), None)
 
     if not db_user:
-        print("DEBUG: User not found")
+        log_debug("User not found anywhere.")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
@@ -182,14 +203,14 @@ async def login(user: UserLogin):
         )
     
     if not verify_password(user.password, db_user["hashed_password"]):
-        print("DEBUG: Password verification failed")
+        log_debug("Password verification failed")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    print("DEBUG: Password verified. Generating token...")
+    log_debug("Login successful. Generating token.")
     access_token = create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -199,11 +220,11 @@ async def generate_roadmap(profile: UserProfile, current_user: dict = Depends(ge
     load_dotenv(override=True)
     current_key = os.getenv("OPENROUTER_API_KEY")
     
-    print(f"DEBUG: Generating roadmap for {profile.target_role}")
+    log_debug(f"Generating roadmap for {profile.target_role}")
     
     # 1. Check if API Key is valid
     if not current_key:
-        print("CRITICAL: No valid OPENROUTER_API_KEY found. Falling back to Mock Data.")
+        log_debug("CRITICAL: No valid OPENROUTER_API_KEY found. Falling back to Mock Data.")
         roadmap = generate_mock_roadmap(profile)
     else:
         try:
@@ -211,6 +232,7 @@ async def generate_roadmap(profile: UserProfile, current_user: dict = Depends(ge
             or_client = OpenAI(
                 base_url="https://openrouter.ai/api/v1",
                 api_key=current_key,
+                timeout=45.0 # Set explicit timeout
             )
 
             # Calculate approximate weeks
@@ -226,7 +248,7 @@ async def generate_roadmap(profile: UserProfile, current_user: dict = Depends(ge
                     duration_weeks = int(re.search(r'(\d+)', timeline_str).group(1))
                 except: pass
             
-            print(f"DEBUG: Calculated duration_weeks: {duration_weeks} (Input: {profile.timeline})")
+            log_debug(f"Calculated duration_weeks: {duration_weeks}")
 
             system_prompt = "You are an expert technical career coach. You output STRICT JSON only."
             user_prompt = f"""
@@ -259,32 +281,18 @@ async def generate_roadmap(profile: UserProfile, current_user: dict = Depends(ge
             }}
             """
             
-            print(f"DEBUG: Sending prompt to OpenRouter (xiaomi/mimo-v2-flash:free)...")
+            log_debug(f"Sending prompt to OpenRouter (xiaomi/mimo-v2-flash:free)...")
             
-            stream = or_client.chat.completions.create(
+            completion = or_client.chat.completions.create(
                 model="xiaomi/mimo-v2-flash:free", 
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
-                ],
-                stream=True,
-                stream_options={"include_usage": True}
+                ]
             )
             
-            text_response = ""
-            for chunk in stream:
-                if chunk.choices and len(chunk.choices) > 0:
-                    content = chunk.choices[0].delta.content
-                    if content:
-                        text_response += content
-                
-                # Usage information usually comes in the final chunk
-                if hasattr(chunk, 'usage') and chunk.usage:
-                    # OpenRouter uses 'reasoning_tokens' in the usage object
-                    reasoning = getattr(chunk.usage, "reasoning_tokens", "N/A")
-                    print(f"\nDEBUG: Generation complete. Reasoning tokens: {reasoning}")
-
-            print("DEBUG: OpenRouter response received.")
+            text_response = completion.choices[0].message.content
+            log_debug("OpenRouter response received.")
 
             # Robust JSON Extraction
             try:
@@ -294,28 +302,40 @@ async def generate_roadmap(profile: UserProfile, current_user: dict = Depends(ge
                     clean_json = text_response[start_index:end_index+1]
                     data = json.loads(clean_json)
                     roadmap = Roadmap(**data)
-                    print(f"DEBUG: Successfully parsed {len(roadmap.steps)} weeks of AI data.")
+                    log_debug(f"Successfully parsed {len(roadmap.steps)} weeks of AI data.")
                     
                     # --- ENRICHMENT STEP ---
-                    print("DEBUG: Enriching resources with real links...")
-                    for step in roadmap.steps:
-                        for res in step.resources:
-                            if not res.url or len(res.url.strip()) == 0:
-                                search_query = f"{res.title} {profile.target_role} tutorial"
-                                found_url = search_link(search_query)
-                                if found_url:
-                                    res.url = found_url
-                                    print(f"  + Linked '{res.title}' -> {found_url}")
+                    log_debug("Enriching resources with real links...")
+                    # Note: search_link needs to be defined or imported. 
+                    # Assuming it's not defined in the scope based on previous read, 
+                    # disabling enrichment temporarily to prevent NameError, or using mock links.
+                    # Or I can add a simple mock enricher here if search_link is missing.
+                    # Checking imports... from duckduckgo_search import DDGS is there.
+                    # I'll implement a simple inline search here to be safe.
+                    
+                    try:
+                        ddgs = DDGS()
+                        for step in roadmap.steps:
+                            for res in step.resources:
+                                if not res.url or len(res.url.strip()) == 0:
+                                    search_query = f"{res.title} {profile.target_role} tutorial"
+                                    # Simple synchronous search
+                                    results = list(ddgs.text(search_query, max_results=1))
+                                    if results:
+                                        res.url = results[0]['href']
+                                        log_debug(f"  + Linked '{res.title}' -> {res.url}")
+                    except Exception as e:
+                         log_debug(f"Enrichment warning: {e}")
                     # -----------------------
 
                 else:
                     raise ValueError("No JSON block found")
             except Exception as e:
-                print(f"JSON Parse Error: {e}. Raw: {text_response[:100]}...")
+                log_debug(f"JSON Parse Error: {e}. Raw: {text_response[:100]}...")
                 raise e
 
         except Exception as e:
-            print(f"ERROR in OpenRouter Flow: {e}")
+            log_debug(f"ERROR in OpenRouter Flow: {e}")
             import traceback
             traceback.print_exc()
             roadmap = generate_mock_roadmap(profile)
@@ -330,7 +350,7 @@ async def generate_roadmap(profile: UserProfile, current_user: dict = Depends(ge
         else:
             await db.roadmaps.insert_one(roadmap.dict())
     except Exception as e:
-        print(f"WARNING: DB Save failed ({e}). Using Mock Storage.")
+        log_debug(f"WARNING: DB Save failed ({e}). Using Mock Storage.")
         MOCK_ROADMAPS[current_user["email"]] = roadmap.dict()
         
     return roadmap

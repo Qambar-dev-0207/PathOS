@@ -27,7 +27,7 @@ export default function AboutPage() {
             THE BUILDER
           </h1>
           <p className="text-xl text-zinc-400 leading-relaxed">
-            I build systems that bridge the gap between human potential and market reality. Career_OS is my attempt to systematize success.
+            I build systems that bridge the gap between human potential and market reality. PathOS is my attempt to systematize success.
           </p>
         </div>
 
