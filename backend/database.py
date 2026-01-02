@@ -6,6 +6,10 @@ load_dotenv()
 
 MONGODB_URL = os.getenv("MONGODB_URL")
 USE_MOCK_DB_ENV = os.getenv("USE_MOCK_DB", "false").lower() == "true"
+
+print(f"DEBUG: MONGODB_URL found: {bool(MONGODB_URL)}")
+print(f"DEBUG: USE_MOCK_DB_ENV: {USE_MOCK_DB_ENV}")
+
 # Use mock if explicitly requested OR if no MongoDB URL is provided
 USE_MOCK_DB = USE_MOCK_DB_ENV or not MONGODB_URL
 
