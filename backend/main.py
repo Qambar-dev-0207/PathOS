@@ -155,9 +155,13 @@ async def health_check():
 default_pwd_hash = pwd_context.hash("password")
 MOCK_USERS = [
     {
+        "_id": "demo",
         "name": "Demo Operator",
         "email": "demo@pathos.dev",
-        "hashed_password": default_pwd_hash
+        "hashed_password": default_pwd_hash,
+        "friends": [],
+        "friend_requests_sent": [],
+        "friend_requests_received": []
     }
 ]
 MOCK_ROADMAPS = {}
@@ -242,6 +246,250 @@ async def login(user: UserLogin):
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+# --- Friend System Routes ---
+
+@app.post("/friends/request/{target_id}")
+async def send_friend_request(target_id: str, current_user: dict = Depends(get_current_user)):
+    current_id = str(current_user.get("_id", "demo"))
+    if target_id == current_id:
+        raise HTTPException(status_code=400, detail="Cannot friend yourself")
+
+    # AUTO-ACCEPT FOR DEMO: Immediate connection
+    if target_id == "demo":
+        # Add to current user's friends
+        if "_id" in current_user and isinstance(current_user["_id"], ObjectId):
+            await db.users.update_one(
+                {"_id": current_user["_id"]}, 
+                {
+                    "$addToSet": {"friends": "demo"},
+                    "$pull": {"friend_requests_sent": "demo"}
+                }
+            )
+        
+        # Add to Demo's friends (Mock)
+        d_user = next((u for u in MOCK_USERS if u["email"] == "demo@pathos.dev"), None)
+        if d_user:
+            d_user.setdefault("friends", []).append(current_id)
+            if current_id in d_user.get("friend_requests_received", []):
+                d_user["friend_requests_received"].remove(current_id)
+                
+        return {"message": "Friend request accepted automatically (Demo)"}
+
+    # Check if target exists
+    target_user = None
+    try:
+        if ObjectId.is_valid(target_id):
+            target_user = await db.users.find_one({"_id": ObjectId(target_id)})
+    except: pass
+    
+    if not target_user:
+        # Check Mock
+        target_user = next((u for u in MOCK_USERS if str(u.get("_id", "")) == target_id), None)
+    
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Logic for MongoDB
+    if "_id" in current_user and isinstance(current_user["_id"], ObjectId):
+        # Check if already friends or requested
+        if target_id in current_user.get("friends", []) or target_id in current_user.get("friend_requests_sent", []):
+             return {"message": "Request already sent or already friends"}
+             
+        # Update Sender
+        await db.users.update_one({"_id": current_user["_id"]}, {"$addToSet": {"friend_requests_sent": target_id}})
+        
+        # Update Target
+        if ObjectId.is_valid(target_id):
+            await db.users.update_one({"_id": ObjectId(target_id)}, {"$addToSet": {"friend_requests_received": current_id}})
+        else:
+            # Handle Mock Target (update in memory for 'demo' user)
+            t_user = next((u for u in MOCK_USERS if str(u.get("_id", "")) == target_id), None)
+            if t_user:
+                t_user.setdefault("friend_requests_received", []).append(current_id)
+    
+    else:
+        # Mock Logic
+        c_user = next((u for u in MOCK_USERS if str(u.get("_id", "")) == current_id), None)
+        t_user = next((u for u in MOCK_USERS if str(u.get("_id", "")) == target_id), None)
+        
+        if c_user and t_user:
+            if target_id not in c_user.get("friends", []) and target_id not in c_user.get("friend_requests_sent", []):
+                c_user.setdefault("friend_requests_sent", []).append(target_id)
+                t_user.setdefault("friend_requests_received", []).append(current_id)
+
+    return {"message": "Friend request sent"}
+
+@app.post("/friends/accept/{requester_id}")
+async def accept_friend_request(requester_id: str, current_user: dict = Depends(get_current_user)):
+    current_id = str(current_user.get("_id", "demo"))
+    
+    # MongoDB Logic
+    if "_id" in current_user and isinstance(current_user["_id"], ObjectId):
+        # Verify request exists
+        if requester_id not in current_user.get("friend_requests_received", []):
+            raise HTTPException(status_code=400, detail="No request found")
+
+        # Add to friends list (both ways)
+        await db.users.update_one({"_id": current_user["_id"]}, {
+            "$addToSet": {"friends": requester_id},
+            "$pull": {"friend_requests_received": requester_id}
+        })
+        
+        if ObjectId.is_valid(requester_id):
+            await db.users.update_one({"_id": ObjectId(requester_id)}, {
+                "$addToSet": {"friends": current_id},
+                "$pull": {"friend_requests_sent": current_id}
+            })
+        else:
+            # Handle Mock Requester
+            r_user = next((u for u in MOCK_USERS if str(u.get("_id", "")) == requester_id), None)
+            if r_user:
+                r_user.setdefault("friends", []).append(current_id)
+                if current_id in r_user.get("friend_requests_sent", []):
+                    r_user["friend_requests_sent"].remove(current_id)
+    else:
+        # Mock Logic
+        c_user = next((u for u in MOCK_USERS if str(u.get("_id", "")) == current_id), None)
+        r_user = next((u for u in MOCK_USERS if str(u.get("_id", "")) == requester_id), None)
+        
+        if c_user and r_user:
+            if requester_id in c_user.get("friend_requests_received", []):
+                c_user.setdefault("friends", []).append(requester_id)
+                c_user["friend_requests_received"].remove(requester_id)
+                
+                r_user.setdefault("friends", []).append(current_id)
+                if current_id in r_user.get("friend_requests_sent", []):
+                    r_user["friend_requests_sent"].remove(current_id)
+
+    return {"message": "Friend request accepted"}
+
+@app.get("/friends")
+async def get_friends(current_user: dict = Depends(get_current_user)):
+    # SELF-HEALING: If 'demo' is pending, promote it
+    if "demo" in current_user.get("friend_requests_sent", []):
+        if "_id" in current_user and isinstance(current_user["_id"], ObjectId):
+             await db.users.update_one(
+                {"_id": current_user["_id"]}, 
+                {
+                    "$addToSet": {"friends": "demo"},
+                    "$pull": {"friend_requests_sent": "demo"}
+                }
+             )
+             # Refresh current_user object locally for this request
+             current_user["friends"].append("demo")
+             current_user["friend_requests_sent"].remove("demo")
+             
+             # Also update Demo side (Mock)
+             d_user = next((u for u in MOCK_USERS if u["email"] == "demo@pathos.dev"), None)
+             current_id = str(current_user["_id"])
+             if d_user:
+                 d_user.setdefault("friends", []).append(current_id)
+
+    friend_ids = current_user.get("friends", [])
+    friends_data = []
+
+    # MongoDB Fetch
+    if "_id" in current_user and isinstance(current_user["_id"], ObjectId):
+        if friend_ids:
+            # Convert str ids to ObjectId if needed, but they are stored as str usually in mixed list? 
+            # In update_one above I used raw string ID. 
+            # Standardizing: IDs in lists should be strings to match Pydantic.
+            try:
+                # If they were stored as strings
+                obj_ids = [ObjectId(fid) for fid in friend_ids if ObjectId.is_valid(fid)]
+                cursor = db.users.find({"_id": {"$in": obj_ids}})
+                async for f in cursor:
+                    # Get their stats
+                    roadmap = await db.roadmaps.find_one({"user_email": f["email"]})
+                    stats = {"percent": 0, "role": "Undecided"}
+                    if roadmap:
+                        steps = roadmap.get("steps", [])
+                        total = len(steps)
+                        completed = sum(1 for s in steps if s.get("completed"))
+                        stats = {
+                            "percent": int((completed/total)*100) if total > 0 else 0,
+                            "role": roadmap.get("role", "Undecided")
+                        }
+                    
+                    friends_data.append({
+                        "id": str(f["_id"]),
+                        "name": f["name"],
+                        "stats": stats
+                    })
+                
+                # Manual add for Demo if present
+                if "demo" in friend_ids:
+                    d_user = next((u for u in MOCK_USERS if u["email"] == "demo@pathos.dev"), None)
+                    if d_user:
+                        roadmap = MOCK_ROADMAPS.get(d_user["email"])
+                        stats = {"percent": 0, "role": "Undecided"}
+                        if roadmap:
+                            steps = roadmap.get("steps", [])
+                            total = len(steps)
+                            completed = sum(1 for s in steps if s.get("completed"))
+                            stats = {
+                                "percent": int((completed/total)*100) if total > 0 else 0,
+                                "role": roadmap.get("role", "Undecided")
+                            }
+                        friends_data.append({
+                            "id": "demo",
+                            "name": d_user["name"],
+                            "stats": stats
+                        })
+
+            except Exception as e:
+                print(f"Error fetching friends: {e}")
+                
+    # Mock Fetch
+    else:
+        for fid in friend_ids:
+            f = next((u for u in MOCK_USERS if str(u.get("_id", "")) == fid), None)
+            if f:
+                roadmap = MOCK_ROADMAPS.get(f["email"])
+                stats = {"percent": 0, "role": "Undecided"}
+                if roadmap:
+                     # Roadmap is dict here
+                     steps = roadmap.get("steps", [])
+                     total = len(steps)
+                     completed = sum(1 for s in steps if s.get("completed"))
+                     stats = {
+                        "percent": int((completed/total)*100) if total > 0 else 0,
+                        "role": roadmap.get("role", "Undecided")
+                     }
+                friends_data.append({
+                    "id": str(f.get("_id", "demo")),
+                    "name": f["name"],
+                    "stats": stats
+                })
+
+    return friends_data
+
+@app.get("/friends/requests")
+async def get_friend_requests(current_user: dict = Depends(get_current_user)):
+    # Return full objects for received requests so we can show names
+    received_ids = current_user.get("friend_requests_received", [])
+    sent_ids = current_user.get("friend_requests_sent", [])
+    
+    received_users = []
+    
+    # Mongo
+    if "_id" in current_user and isinstance(current_user["_id"], ObjectId):
+        if received_ids:
+            obj_ids = [ObjectId(rid) for rid in received_ids if ObjectId.is_valid(rid)]
+            async for u in db.users.find({"_id": {"$in": obj_ids}}):
+                received_users.append({"id": str(u["_id"]), "name": u["name"]})
+    # Mock
+    else:
+        for rid in received_ids:
+            u = next((u for u in MOCK_USERS if str(u.get("_id", "")) == rid), None)
+            if u:
+                received_users.append({"id": str(u.get("_id", "")), "name": u["name"]})
+
+    return {
+        "received": received_users,
+        "sent": sent_ids
+    }
 
 @app.post("/generate-roadmap", response_model=Roadmap)
 async def generate_roadmap(profile: UserProfile, current_user: dict = Depends(get_current_user)):
@@ -475,59 +723,90 @@ def generate_mock_roadmap(profile: UserProfile) -> Roadmap:
 
     return Roadmap(role=role, steps=steps)
 
+def stringify_objectid(data):
+    if isinstance(data, list):
+        return [stringify_objectid(item) for item in data]
+    if isinstance(data, dict):
+        return {k: stringify_objectid(v) for k, v in data.items()}
+    if isinstance(data, ObjectId):
+        return str(data)
+    if hasattr(data, "dict"): # Handle Pydantic models
+        return stringify_objectid(data.dict())
+    return data
+
 @app.get('/public/profile/{user_id}')
 async def get_public_profile(user_id: str):
-    user = None
-    roadmap = None
-
-    # Handle 'demo' special case
-    if user_id == 'demo':
-        user = next((u for u in MOCK_USERS if u['email'] == 'demo@pathos.dev'), None)
-        if user:
-             roadmap = MOCK_ROADMAPS.get('demo@pathos.dev')
-             # If no roadmap for demo yet, gen one? No, just return empty.
-    
-    # Try MongoDB
-    if not user and ObjectId.is_valid(user_id):
-        try:
-            user = await db.users.find_one({'_id': ObjectId(user_id)})
-        except Exception as e:
-            print(f'DB Error: {e}')
-    
-    if not user:
-        raise HTTPException(status_code=404, detail='User not found')
-
-    # Get Roadmap
     try:
-        roadmap = await db.roadmaps.find_one({'user_email': user['email']})
-    except:
-        pass
-    
-    if not roadmap:
-        # Check Mock
-        roadmap = MOCK_ROADMAPS.get(user['email'])
+        user = None
+        roadmap = None
 
-    # Calculate Stats
-    total_steps = 0
-    completed_steps = 0
-    role = 'Undecided'
-    
-    if roadmap:
-        role = roadmap.get('role', 'Undecided')
-        steps = roadmap.get('steps', [])
-        total_steps = len(steps)
-        completed_steps = sum(1 for s in steps if s.get('completed', False))
+        # Handle 'demo' special case
+        if user_id == 'demo':
+            user = next((u for u in MOCK_USERS if u['email'] == 'demo@pathos.dev'), None)
+            if user:
+                 roadmap = MOCK_ROADMAPS.get('demo@pathos.dev')
+        
+        # Try MongoDB
+        if not user and ObjectId.is_valid(user_id):
+            try:
+                user = await db.users.find_one({'_id': ObjectId(user_id)})
+            except Exception as e:
+                print(f'DB Error: {e}')
+        
+        if not user:
+            raise HTTPException(status_code=404, detail='User not found')
 
-    return {
-        'name': user.get('name', 'Anonymous'),
-        'role': role,
-        'stats': {
-            'total': total_steps,
-            'completed': completed_steps,
-            'percent': int((completed_steps / total_steps * 100) if total_steps > 0 else 0)
-        },
-        'roadmap': roadmap  # Return full roadmap for the timeline view
-    }
+        # Get Roadmap
+        try:
+            roadmap = await db.roadmaps.find_one({'user_email': user['email']})
+        except:
+            pass
+        
+        if not roadmap:
+            # Check Mock
+            roadmap = MOCK_ROADMAPS.get(user['email'])
+
+        # Calculate Stats
+        total_steps = 0
+        completed_steps = 0
+        role = 'Undecided'
+        
+        if roadmap:
+            # If roadmap is a Pydantic model (from mock), convert to dict
+            if hasattr(roadmap, "dict"):
+                roadmap_dict = roadmap.dict()
+            else:
+                roadmap_dict = roadmap
+                
+            role = roadmap_dict.get('role', 'Undecided')
+            steps = roadmap_dict.get('steps', [])
+            total_steps = len(steps)
+            completed_steps = sum(1 for s in steps if s.get('completed', False))
+            roadmap_to_return = roadmap_dict
+        else:
+            roadmap_to_return = None
+
+        response_data = {
+            'name': user.get('name', 'Anonymous'),
+            'role': role,
+            'stats': {
+                'total': total_steps,
+                'completed': completed_steps,
+                'percent': int((completed_steps / total_steps * 100) if total_steps > 0 else 0)
+            },
+            'roadmap': roadmap_to_return
+        }
+        
+        return stringify_objectid(response_data)
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        # Return the actual error for debugging
+        import traceback
+        return {
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }
 
 
 

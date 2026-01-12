@@ -24,6 +24,9 @@ class UserModel(BaseModel):
     name: str
     email: EmailStr
     hashed_password: str
+    friends: List[str] = []
+    friend_requests_sent: List[str] = []
+    friend_requests_received: List[str] = []
 
 class UserCreate(BaseModel):
     name: str

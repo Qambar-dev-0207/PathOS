@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft, Disc, Share2, CheckCircle, Circle, Trophy } from "lucide-react";
+import { ArrowLeft, Disc, Share2, CheckCircle, Circle, Trophy, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BaryonLoader } from "@/components/ui/baryon-loader";
+import { cn } from "@/lib/utils";
 
 interface PublicProfileData {
   name: string;
@@ -19,17 +20,22 @@ interface PublicProfileData {
   roadmap: any;
 }
 
+type FriendStatus = 'none' | 'sent' | 'received' | 'connected' | 'me';
+
 export default function PublicProfilePage() {
   const params = useParams();
   const userId = params?.userId as string;
   const [data, setData] = useState<PublicProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [friendStatus, setFriendStatus] = useState<FriendStatus>('none');
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     if (!userId) return;
 
-    fetch(`https://pathos.onrender.com/public/profile/${userId}`)
+    // 1. Fetch Profile Data
+    fetch(`http://localhost:8002/public/profile/${userId}`)
       .then(async (res) => {
         if (!res.ok) throw new Error("Operator not found");
         return res.json();
@@ -43,7 +49,78 @@ export default function PublicProfilePage() {
       .finally(() => {
         setLoading(false);
       });
+
+    // 2. Check Friend Status (if logged in)
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+        checkStatus(token);
+    }
   }, [userId]);
+
+  const checkStatus = async (token: string) => {
+      try {
+          // Get Me, Friends, Requests
+          const [meRes, friendsRes, reqRes] = await Promise.all([
+              fetch("http://localhost:8002/auth/me", { headers: { Authorization: `Bearer ${token}` } }),
+              fetch("http://localhost:8002/friends", { headers: { Authorization: `Bearer ${token}` } }),
+              fetch("http://localhost:8002/friends/requests", { headers: { Authorization: `Bearer ${token}` } }),
+          ]);
+
+          if (meRes.ok && friendsRes.ok && reqRes.ok) {
+              const me = await meRes.json();
+              const friends = await friendsRes.json();
+              const requests = await reqRes.json();
+
+              if (me.id === userId) {
+                  setFriendStatus('me');
+              } else if (friends.some((f: any) => f.id === userId)) {
+                  setFriendStatus('connected');
+              } else if (requests.sent.includes(userId)) {
+                  setFriendStatus('sent');
+              } else if (requests.received.some((r: any) => r.id === userId)) {
+                  setFriendStatus('received');
+              } else {
+                  setFriendStatus('none');
+              }
+          }
+      } catch (e) {
+          console.error("Status check failed", e);
+      }
+  };
+
+  const handleConnect = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+        // Redirect to login or show alert
+        alert("Authentication required to connect.");
+        return;
+    }
+
+    setActionLoading(true);
+    try {
+        let url = "";
+        if (friendStatus === 'none') {
+            url = `http://localhost:8002/friends/request/${userId}`;
+        } else if (friendStatus === 'received') {
+            url = `http://localhost:8002/friends/accept/${userId}`;
+        }
+
+        if (url) {
+            const res = await fetch(url, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                // Refresh status
+                checkStatus(token);
+            }
+        }
+    } catch (e) {
+        console.error(e);
+    } finally {
+        setActionLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -77,17 +154,47 @@ export default function PublicProfilePage() {
             <ArrowLeft className="mr-2 w-4 h-4" /> PATH_OS
           </Button>
         </Link>
-        <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
-                alert("Profile Link Copied to Clipboard");
-            }}
-            className="border-white/10 text-zinc-400 hover:text-white hover:bg-white/5"
-        >
-            <Share2 className="w-4 h-4 mr-2" /> SHARE
-        </Button>
+        <div className="flex gap-2">
+            {friendStatus !== 'me' && (
+                <Button 
+                    variant={friendStatus === 'connected' ? "outline" : "default"}
+                    className={cn(
+                        "font-mono uppercase tracking-widest transition-all",
+                        friendStatus === 'connected' && "text-emerald-500 border-emerald-500/50 bg-emerald-500/5 hover:bg-emerald-500/10 hover:text-emerald-400",
+                        friendStatus === 'none' && "bg-amber-500 text-black hover:bg-amber-400"
+                    )}
+                    disabled={friendStatus === 'sent' || friendStatus === 'connected' || actionLoading}
+                    onClick={handleConnect}
+                >
+                    {actionLoading ? (
+                        <Disc className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                        <>
+                            {friendStatus === 'connected' && <CheckCircle className="w-4 h-4 mr-2" />}
+                            {friendStatus === 'sent' && <Disc className="w-4 h-4 mr-2 animate-spin" />}
+                            {friendStatus === 'received' && <UserPlus className="w-4 h-4 mr-2" />}
+                            {friendStatus === 'none' && <UserPlus className="w-4 h-4 mr-2" />}
+                        </>
+                    )}
+                    
+                    {friendStatus === 'connected' && "Connected"}
+                    {friendStatus === 'sent' && "Pending"}
+                    {friendStatus === 'received' && "Accept"}
+                    {friendStatus === 'none' && "Connect"}
+                </Button>
+            )}
+            <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert("Profile Link Copied to Clipboard");
+                }}
+                className="border-white/10 text-zinc-400 hover:text-white hover:bg-white/5"
+            >
+                <Share2 className="w-4 h-4 mr-2" /> SHARE
+            </Button>
+        </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-6 py-12 relative z-10">
@@ -185,8 +292,4 @@ function StatsCard({ label, value }: { label: string, value: string }) {
             </div>
         </div>
     )
-}
-
-function cn(...classes: (string | undefined | null | false)[]) {
-  return classes.filter(Boolean).join(" ");
 }

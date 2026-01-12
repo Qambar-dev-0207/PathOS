@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, ArrowLeft, Disc, Command, User, Shield, Terminal, Activity, Zap, LogOut } from "lucide-react";
+import { ArrowRight, ArrowLeft, Disc, Command, User, Shield, Terminal, Activity, Zap, LogOut, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { BaryonLoader } from "@/components/ui/baryon-loader";
@@ -79,7 +79,7 @@ export default function ProfilePage() {
             }
 
             try {
-                const userRes = await fetch("https://pathos.onrender.com/auth/me", {
+                const userRes = await fetch("http://localhost:8002/auth/me", {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 
@@ -94,7 +94,7 @@ export default function ProfilePage() {
                 const userData = await userRes.json();
                 setUser(userData);
 
-                const roadmapRes = await fetch("https://pathos.onrender.com/roadmap", {
+                const roadmapRes = await fetch("http://localhost:8002/roadmap", {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
 
@@ -140,7 +140,7 @@ function UserProfileDashboard({ user }: { user: UserData | null }) {
     const router = useRouter();
 
     return (
-        <main className="max-w-5xl mx-auto px-6 py-12 relative z-10">
+        <main className="max-w-6xl mx-auto px-6 py-12 relative z-10">
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -155,7 +155,7 @@ function UserProfileDashboard({ user }: { user: UserData | null }) {
                     WELCOME, {user?.name || "OPERATOR"}
                 </h1>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
                     {/* Status Card */}
                     <div className="p-8 border border-white/10 bg-zinc-900/20 backdrop-blur-sm rounded-lg relative overflow-hidden group hover:border-amber-500/30 transition-colors">
                         <div className="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity">
@@ -168,6 +168,21 @@ function UserProfileDashboard({ user }: { user: UserData | null }) {
                             className="w-full bg-white text-black hover:bg-amber-400 hover:text-black font-bold tracking-widest"
                         >
                             CONTINUE EXECUTION <ArrowRight className="ml-2 w-4 h-4" />
+                        </Button>
+                    </div>
+
+                    {/* Network Card */}
+                    <div className="p-8 border border-white/10 bg-zinc-900/20 backdrop-blur-sm rounded-lg relative overflow-hidden group hover:border-emerald-500/30 transition-colors">
+                        <div className="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity">
+                            <Users className="w-6 h-6 text-zinc-600 group-hover:text-emerald-500" />
+                        </div>
+                        <div className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 mb-2">Network Uplink</div>
+                        <div className="text-3xl font-bold text-white mb-6">CONNECTIONS</div>
+                        <Button 
+                            onClick={() => router.push("/network")}
+                            className="w-full bg-emerald-500 text-black hover:bg-emerald-400 font-bold tracking-widest"
+                        >
+                            ACCESS NETWORK <ArrowRight className="ml-2 w-4 h-4" />
                         </Button>
                     </div>
 

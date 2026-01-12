@@ -272,11 +272,13 @@ function Header() {
           </nav>
           <div className="flex gap-4 items-center">
             {isAuthenticated ? (
-                <Link href="/profile" className="pointer-events-auto">
-                    <Button variant="outline" size="sm" className="font-mono text-xs h-9 bg-white text-black border-transparent hover:bg-amber-400 hover:text-black transition-all duration-300 uppercase tracking-widest font-bold">
-                    Dashboard
-                    </Button>
-                </Link>
+                <div className="flex gap-2">
+                    <Link href="/profile" className="pointer-events-auto">
+                        <Button variant="outline" size="sm" className="font-mono text-xs h-9 bg-white text-black border-transparent hover:bg-amber-400 hover:text-black transition-all duration-300 uppercase tracking-widest font-bold">
+                        Dashboard
+                        </Button>
+                    </Link>
+                </div>
             ) : (
                 <>
                     <Link href="/login" className="pointer-events-auto">
