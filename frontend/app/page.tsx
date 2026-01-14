@@ -127,46 +127,92 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[300px] gap-4">
+                 {/* Card 1: Large Feature (Reverse Engineered) */}
                  <BentoCard 
                     title="Reverse Engineered"
                     desc="We parse thousands of job descriptions to extract the exact signal-to-noise ratio of skills."
-                    icon={<Cpu className="w-8 h-8" />}
+                    icon={<Cpu className="w-5 h-5" />}
                     delay={0.1}
-                 />
+                    className="md:col-span-2 md:row-span-2 bg-zinc-900/40"
+                 >
+                    {/* Visual Mockup: Skills Graph */}
+                    <div className="absolute right-0 bottom-0 w-3/4 h-3/4 bg-gradient-to-tl from-zinc-800/20 to-transparent border-t border-l border-white/5 rounded-tl-2xl overflow-hidden p-6 flex items-end gap-2 mask-gradient-b">
+                        {[40, 70, 45, 90, 60, 80, 50].map((h, i) => (
+                            <motion.div 
+                                key={i}
+                                initial={{ height: 0 }}
+                                whileInView={{ height: `${h}%` }}
+                                transition={{ duration: 1, delay: 0.2 + (i * 0.1) }}
+                                className="w-full bg-zinc-700/50 hover:bg-amber-500/80 transition-colors rounded-t-sm relative group"
+                            >
+                                <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity font-mono text-amber-500">{h}%</div>
+                            </motion.div>
+                        ))}
+                    </div>
+                 </BentoCard>
+
+                 {/* Card 2: Tall Feature (Adaptive Velocity) */}
                  <BentoCard 
                     title="Adaptive Velocity"
                     desc="Miss a week? The system recalibrates. Ahead of schedule? The difficulty ramps up."
-                    icon={<Activity className="w-8 h-8" />}
+                    icon={<Activity className="w-5 h-5 text-amber-500" />}
                     delay={0.2}
-                    className="md:col-span-1 lg:col-span-2 bg-gradient-to-br from-zinc-900 to-black border-zinc-800"
-                 />
+                    className="md:col-span-1 md:row-span-2 bg-gradient-to-b from-zinc-900 to-black border-zinc-800"
+                 >
+                    <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                         <div className="w-40 h-40 border border-amber-500/30 rounded-full animate-[spin_10s_linear_infinite] border-t-amber-500 border-r-transparent" />
+                         <div className="absolute w-32 h-32 border border-white/10 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
+                    </div>
+                 </BentoCard>
+
+                 {/* Card 3: Standard (Brutal Feasibility) */}
                  <BentoCard 
                     title="Brutal Feasibility"
                     desc="Reality checks against your timeline. No false promises."
-                    icon={<Zap className="w-8 h-8 text-black" />}
+                    icon={<Zap className="w-5 h-5 text-black" />}
                     delay={0.3}
-                    className="md:col-span-1 lg:col-span-2 bg-white text-black border-transparent hover:shadow-[0_0_30px_rgba(255,255,255,0.3)]"
-                    iconClass="text-black"
+                    className="md:col-span-1 md:row-span-1 bg-white text-black border-transparent hover:shadow-[0_0_30px_rgba(255,255,255,0.3)]"
+                    iconClass="text-black bg-black/10"
                  />
-                 <BentoCard 
-                    title="Market Context"
-                    desc="Real-time salary data integrated into your decision matrix."
-                    icon={<Layers className="w-8 h-8" />}
-                    delay={0.4}
-                 />
+
+                 {/* Card 4: Standard (Global Reach) */}
                  <BentoCard 
                     title="Global Reach"
                     desc="Remote-first opportunities prioritized for maximum leverage."
-                    icon={<Globe className="w-8 h-8" />}
+                    icon={<Globe className="w-5 h-5" />}
                     delay={0.5}
+                    className="md:col-span-1 md:row-span-1"
                  />
+
+                 {/* Card 5: Wide Feature (Market Context) */}
+                 <BentoCard 
+                    title="Market Context"
+                    desc="Real-time salary data integrated into your decision matrix."
+                    icon={<Layers className="w-5 h-5" />}
+                    delay={0.4}
+                    className="md:col-span-2 md:row-span-1"
+                 >
+                    <div className="absolute right-4 top-4 flex gap-2">
+                        <div className="px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded text-[10px] text-emerald-500 font-mono">
+                            ▲ +12% YoY
+                        </div>
+                    </div>
+                 </BentoCard>
+
+                  {/* Card 6: Wide Feature (Encrypted Core) */}
                   <BentoCard 
                     title="Encrypted Core"
                     desc="Your career data is sensitive. We treat it like state secrets."
-                    icon={<Lock className="w-8 h-8" />}
+                    icon={<Lock className="w-5 h-5" />}
                     delay={0.6}
-                 />
+                    className="md:col-span-2 md:row-span-1"
+                 >
+                    <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+                    <div className="absolute bottom-4 right-4 font-mono text-[10px] text-zinc-600">
+                        AES-256-GCM // 0x4F2A...
+                    </div>
+                 </BentoCard>
               </div>
            </div>
            
@@ -391,7 +437,7 @@ function DecryptedText({
     );
 }
 
-function BentoCard({ title, desc, icon, delay, className, iconClass }: { title: string, desc: string, icon: React.ReactNode, delay: number, className?: string, iconClass?: string }) {
+function BentoCard({ title, desc, icon, delay, className, iconClass, children }: { title: string, desc: string, icon: React.ReactNode, delay: number, className?: string, iconClass?: string, children?: React.ReactNode }) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -405,35 +451,38 @@ function BentoCard({ title, desc, icon, delay, className, iconClass }: { title: 
     <motion.div 
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
+      viewport={{ once: true, margin: "-50px" }}
       transition={{ delay, duration: 0.5 }}
       onMouseMove={handleMouseMove}
       className={cn(
-        "group relative p-10 h-80 flex flex-col justify-between border border-white/10 overflow-hidden bg-zinc-900/20 backdrop-blur-sm",
+        "group relative p-8 flex flex-col justify-between border border-white/10 overflow-hidden bg-zinc-900/20 backdrop-blur-sm hover:border-white/20 transition-colors duration-500",
         className
       )}
     >
       <motion.div
-        className="pointer-events-none absolute -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
+        className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100"
         style={{
           background: useMotionTemplate`
             radial-gradient(
-              400px circle at ${mouseX}px ${mouseY}px,
-              rgba(255,255,255,0.05),
+              600px circle at ${mouseX}px ${mouseY}px,
+              rgba(255,255,255,0.03),
               transparent 80%
             )
           `,
         }}
       />
       
-      <div className="relative z-10">
-         <div className={cn("mb-6 opacity-80 p-3 bg-white/5 w-fit rounded-lg border border-white/5", iconClass)}>{icon}</div>
-         <h3 className="text-2xl font-bold tracking-tight mb-2">{title}</h3>
-         <p className="opacity-60 leading-relaxed max-w-sm text-sm">{desc}</p>
+      {/* Background/Visual Content */}
+      {children}
+
+      <div className="relative z-10 pointer-events-none">
+         <div className={cn("mb-4 opacity-80 p-2 bg-white/5 w-fit rounded-md border border-white/5", iconClass)}>{icon}</div>
+         <h3 className="text-xl font-bold tracking-tight mb-2">{title}</h3>
+         <p className="opacity-60 leading-relaxed text-sm max-w-[90%] text-balance">{desc}</p>
       </div>
 
-      <div className="absolute bottom-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500 translate-y-4 group-hover:translate-y-0">
-         <ArrowRight className="w-6 h-6 -rotate-45" />
+      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -translate-y-2 group-hover:translate-y-0">
+         <ArrowRight className="w-4 h-4 -rotate-45 text-white/50" />
       </div>
     </motion.div>
   )

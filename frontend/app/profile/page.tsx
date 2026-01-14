@@ -72,18 +72,23 @@ export default function ProfilePage() {
 
     useEffect(() => {
         const checkStatus = async () => {
+            console.log("Profile Page: Checking status...");
             const token = localStorage.getItem("accessToken");
+            
             if (!token) {
+                console.log("No token, redirecting to login");
                 router.push("/login");
                 return;
             }
 
             try {
+                console.log("Fetching /auth/me...");
                 const userRes = await fetch("http://localhost:8002/auth/me", {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 
                 if (userRes.status === 401) {
+                    console.log("User Unauthorized (401)");
                     localStorage.removeItem("accessToken");
                     localStorage.removeItem("generatedRoadmap");
                     router.push("/login");
@@ -98,18 +103,11 @@ export default function ProfilePage() {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
 
-                if (roadmapRes.status === 401) {
-                    localStorage.removeItem("accessToken");
-                    localStorage.removeItem("generatedRoadmap");
-                    router.push("/login");
-                    return;
-                }
-
                 if (roadmapRes.ok) {
                     setHasRoadmap(true);
                 }
             } catch (e) {
-                console.error(e);
+                console.error("Profile Load Error:", e);
             } finally {
                 setLoading(false);
             }

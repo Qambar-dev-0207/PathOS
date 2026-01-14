@@ -117,3 +117,33 @@ body {
     color: transparent;
   }
 }
+
+/* Custom Scrollbar - Dark Theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #09090b; /* Zinc 950 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a; /* Zinc 800 */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f59e0b; /* Amber 500 - Matches Theme Accent */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #27272a #09090b;
+}
+
+/* Custom class for specific containers if needed */
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}

@@ -101,15 +101,25 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         if email is None:
+            log_debug("Token decode failed: No sub/email found")
             raise credentials_exception
         token_data = TokenData(email=email)
-    except JWTError:
+    except JWTError as e:
+        log_debug(f"JWT Decode Error: {e}")
         raise credentials_exception
     
     user = None
     try:
-        user = await db.users.find_one({"email": token_data.email})
-    except Exception:
+        # DB Lookup with explicit safeguard
+        from database import USE_MOCK_DB
+        if not USE_MOCK_DB:
+            try:
+                # Use a simpler find_one which respects the client timeout configured in database.py
+                user = await db.users.find_one({"email": token_data.email})
+            except Exception as db_e:
+                log_debug(f"DB Lookup Failed: {db_e}. Checking Mock...")
+    except Exception as e:
+        log_debug(f"Outer DB Block Error: {e}")
         pass
         
     if user is None:
@@ -117,6 +127,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         user = next((u for u in MOCK_USERS if u["email"] == token_data.email), None)
         
     if user is None:
+        log_debug(f"User {token_data.email} not found in DB or Mock.")
         raise credentials_exception
     return user
 
@@ -541,8 +552,9 @@ async def generate_roadmap(profile: UserProfile, current_user: dict = Depends(ge
             2. CRITICAL: "steps" must contain EXACTLY {duration_weeks} items. One item per week.
             3. Do not group weeks (e.g. "Weeks 1-4"). List each week individually (1 to {duration_weeks}).
             4. Each step needs: "week" (int), "title", "description", "resources".
-            5. "resources" must be a list of objects: {{"title": "Resource Name", "url": "Valid URL or empty string"}}
-            6. STRICT: No markdown code blocks (no ```json). Return raw JSON only.
+            5. "resources" must be a list of 4 to 9 objects: {{"title": "Resource Name", "url": "Valid URL or empty string"}}.
+            6. CRITICAL: Resources must include a mix of Official Docs, YouTube Tutorials, and Articles.
+            7. STRICT: No markdown code blocks (no ```json). Return raw JSON only.
             
             JSON SCHEMA:
             {{
@@ -733,6 +745,95 @@ def stringify_objectid(data):
     if hasattr(data, "dict"): # Handle Pydantic models
         return stringify_objectid(data.dict())
     return data
+
+class QuizRequest(BaseModel):
+    topic: str
+    role: str
+    description: str
+
+class QuizQuestion(BaseModel):
+    id: int
+    question: str
+    options: List[str]
+    correct_index: int
+
+class QuizResponse(BaseModel):
+    questions: List[QuizQuestion]
+
+@app.post("/generate-quiz", response_model=QuizResponse)
+async def generate_quiz(request: QuizRequest, current_user: dict = Depends(get_current_user)):
+    load_dotenv(override=True)
+    current_key = os.getenv("OPENROUTER_API_KEY")
+    
+    log_debug(f"Generating quiz for {request.topic}")
+
+    system_prompt = "You are a technical examiner. Output STRICT JSON only."
+    user_prompt = f"""
+    Create a short, challenging multiple-choice quiz (5 questions) to test understanding of:
+    - Topic: {request.topic}
+    - Context: {request.role}
+    - Details: {request.description}
+
+    REQUIREMENTS:
+    1. Return JSON with a "questions" array.
+    2. Each question needs: "id" (1-5), "question" (string), "options" (array of 4 strings), "correct_index" (int 0-3).
+    3. Questions should test practical understanding, not just definitions.
+    4. NO markdown, just raw JSON.
+
+    JSON SCHEMA:
+    {{
+      "questions": [
+        {{
+          "id": 1,
+          "question": "What is...?",
+          "options": ["Op1", "Op2", "Op3", "Op4"],
+          "correct_index": 0
+        }}
+      ]
+    }}
+    """
+
+    if not current_key:
+        # Mock Quiz Fallback
+        return QuizResponse(questions=[
+            QuizQuestion(id=i, question=f"Mock Question {i} about {request.topic}?", options=["Wrong", "Correct", "Wrong", "Wrong"], correct_index=1)
+            for i in range(1, 6)
+        ])
+
+    try:
+        or_client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=current_key,
+            timeout=30.0
+        )
+        
+        completion = or_client.chat.completions.create(
+            model="xiaomi/mimo-v2-flash:free", 
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ]
+        )
+        
+        text_response = completion.choices[0].message.content
+        
+        # Clean JSON
+        start_index = text_response.find('{')
+        end_index = text_response.rfind('}')
+        if start_index != -1 and end_index != -1:
+            clean_json = text_response[start_index:end_index+1]
+            data = json.loads(clean_json)
+            return QuizResponse(**data)
+        else:
+             raise ValueError("No JSON found")
+
+    except Exception as e:
+        log_debug(f"Quiz Gen Error: {e}")
+        # Fallback
+        return QuizResponse(questions=[
+            QuizQuestion(id=i, question=f"Fallback Question {i}: {request.topic}", options=["A", "B", "C", "D"], correct_index=0)
+            for i in range(1, 6)
+        ])
 
 @app.get('/public/profile/{user_id}')
 async def get_public_profile(user_id: str):
