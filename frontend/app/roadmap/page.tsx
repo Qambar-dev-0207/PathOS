@@ -42,7 +42,7 @@ export default function RoadmapPage() {
 
       try {
         // Fetch User Info
-        const userRes = await fetch("https://pathos.onrender.com/auth/me", {
+        const userRes = await fetch("http://localhost:8002/auth/me", {
             headers: { "Authorization": `Bearer ${token}` }
         });
 
@@ -57,7 +57,7 @@ export default function RoadmapPage() {
             setUser(await userRes.json());
         }
 
-        const res = await fetch("https://pathos.onrender.com/roadmap", {
+        const res = await fetch("http://localhost:8002/roadmap", {
           headers: { "Authorization": `Bearer ${token}` }
         });
         
@@ -128,7 +128,7 @@ export default function RoadmapPage() {
     // Backend Sync
     const token = localStorage.getItem("accessToken");
     try {
-      await fetch("https://pathos.onrender.com/roadmap/progress", {
+      await fetch("http://localhost:8002/roadmap/progress", {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",

@@ -320,7 +320,7 @@ function OnboardingWizard() {
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), 120000); 
 
-      const response = await fetch("https://pathos.onrender.com/generate-roadmap", {
+      const response = await fetch("http://localhost:8002/generate-roadmap", {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
