@@ -523,21 +523,40 @@ async def generate_roadmap(profile: UserProfile, current_user: dict = Depends(ge
                 timeout=45.0 # Set explicit timeout
             )
 
-            # Calculate approximate weeks
-            duration_weeks = 12 # Default
+            # Calculate approximate weeks (Base Duration)
+            base_weeks = 12 # Default
             timeline_str = profile.timeline.lower().replace(" ", "")
             if "month" in timeline_str:
                 try:
                     months = int(re.search(r'(\d+)', timeline_str).group(1))
-                    duration_weeks = months * 4
+                    base_weeks = months * 4
                 except: pass
             elif "week" in timeline_str:
                 try:
-                    duration_weeks = int(re.search(r'(\d+)', timeline_str).group(1))
+                    base_weeks = int(re.search(r'(\d+)', timeline_str).group(1))
                 except: pass
             
-            log_debug(f"Calculated duration_weeks: {duration_weeks}")
-
+            # --- TRAJECTORY CALIBRATION ---
+            # "True Trajectory" Logic:
+            # We assume a standard "High Performance" pace is ~18 hours/week.
+            # If a user has less bandwidth, they need MORE time.
+            
+            STANDARD_PACING_HOURS = 18.0
+            
+            # 1. Clamp user input to realistic bounds (5h to 60h)
+            user_hours = max(5, min(profile.hours_per_week, 60))
+            
+            # 2. Calculate Velocity Factor (e.g., 9h/week = 0.5x velocity)
+            velocity_factor = user_hours / STANDARD_PACING_HOURS
+            
+            # 3. Adjust Weeks (Inverse: Lower velocity = Higher duration)
+            calibrated_weeks = int(base_weeks / velocity_factor)
+            
+            # 4. Safety Clamps (Min 4 weeks, Max 52 weeks to prevent context overflow)
+            duration_weeks = max(4, min(calibrated_weeks, 52))
+            
+            log_debug(f"TRAJECTORY CALIBRATION: Input {base_weeks}w @ {user_hours}h/wk (v={velocity_factor:.2f}) -> Adjusted to {duration_weeks} weeks.")
+            
             system_prompt = "You are an expert technical career coach. You output STRICT JSON only."
             user_prompt = f"""
             Create a detailed, week-by-week career roadmap for:
