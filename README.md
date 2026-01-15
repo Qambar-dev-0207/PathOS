@@ -1,122 +1,118 @@
-# PathOS: Agentic AI Career Co-Pilot
+# PathOS: Career Execution Engine
 
-**PathOS** is an autonomous agentic system designed to optimize career trajectories. It reverse-engineers high-paying roles into granular, week-by-week execution protocols, tailored to your specific skills and bandwidth.
+**PathOS** is a high-performance career optimization platform that reverse-engineers the market's highest-paying roles into granular, week-by-week execution protocols. Designed for engineers who value execution over theory.
 
-![System Architecture](image.png)
+![PathOS Interface](https://raw.githubusercontent.com/Qambar-dev-0207/PathOS/main/frontend/public/grid.svg)
 
-## 🚀 Key Features
+## 🧠 Core Concept
 
-*   **AI Roadmap Generation**: Generates detailed, week-by-week learning paths using **OpenRouter (Xiaomi MiMo-V2-Flash)**.
-*   **Context Intelligence**: Analyzes user constraints (hours/week, current skills) to calculate optimal velocity.
-*   **Resource Enrichment**: Automatically finds and attaches real, high-quality learning resources (Documentation, Videos, GitHub Repos) to every roadmap step.
-*   **Simulation Mode**: Fully functional fallback system that operates without external API keys or Database connections, ensuring zero downtime for demos.
-*   **Dual-Stack Architecture**: Modern Next.js 16 (React 19) frontend coupled with a robust FastAPI backend.
+Modern career advice is often vague, fragmented, and disconnected from market reality. Most engineers suffer from "Analysis Paralysis"—spending more time deciding *what* to learn than actually learning.
 
-## 🛠️ System Architecture
+**PathOS** solves this by treating career progression as a deterministic engineering problem. By analyzing thousands of data points from high-tier job descriptions and market trends, it generates a **sovereign execution protocol**: a custom-tailored, time-bound roadmap that focuses exclusively on high-leverage skills. 
 
-The project is structured as a monorepo with distinct separation of concerns:
+It's not just a learning app; it's a **Career Operating System** designed to minimize cognitive load and maximize ROI on your time.
 
-```
-become-rich-by-2027/
-├── backend/             # FastAPI Service
-│   ├── main.py          # API Entry & Core Logic
-│   ├── database.py      # MongoDB/Mock Persistence
-│   └── venv/            # Python Virtual Environment
-└── frontend/            # Next.js Application
-    ├── app/             # App Router (Pages)
-    └── components/      # UI Components (shadcn/ui)
-```
+## ⚡ System Overview
 
-## ⚡ Quick Start
+PathOS operates on a "Signal-over-Noise" philosophy. It strips away the ambiguity of career progression, providing a direct path to wealth generation through technical mastery.
 
-### Prerequisites
+*   **AI Protocol Generation**: Leverages advanced LLMs (**OpenRouter / Gemini**) to build custom learning trajectories based on your specific bandwidth and current skill delta.
+*   **Cyberpunk Aesthetic**: A high-contrast, "hacker-terminal" interface built with Framer Motion, featuring spotlight effects, grid backgrounds, and character-scrambling "decryption" animations.
+*   **Resource Enrichment**: Integrated DuckDuckGo search engine to automatically verify and attach real-world documentation, repositories, and tutorials to every roadmap step.
+*   **Resilient Architecture**: Hybrid storage system (MongoDB Atlas + In-Memory Fallback) and Simulation Mode ensure the system remains operational even during upstream API outages.
 
-*   Node.js 18+
-*   Python 3.10+
-*   (Optional) MongoDB Connection String
-*   (Optional) OpenRouter API Key
+## ⚙️ Core Modules
 
-### 1. Backend Setup (FastAPI)
+### 1. Identity & Access
+- **Secure Authentication**: JWT-based login/registration system protecting user data.
+- **Mock Identity**: One-click "Demo Mode" for instant access without credentials in development.
 
-The backend powers the AI logic and data persistence.
+### 2. Trajectory Calibration (Onboarding)
+- **Constraint Analysis**: Takes user inputs (Current Skills, Target Role, Salary Goal, Hours/Week).
+- **Velocity Calculation**: Algorithms determine if the goal is realistic within the timeframe, adjusting the roadmap density accordingly.
+
+### 3. Protocol Synthesis (The AI Engine)
+- **Granular Generation**: Breaks down vague goals (e.g., "Become Senior Backend Engineer") into discrete, weekly executable steps.
+- **Topic Clustering**: Logically groups skills (Language → Framework → Architecture → Cloud).
+
+### 4. Resource Intelligence
+- **Auto-Enrichment**: The system scrapes the web (via DuckDuckGo) to find the *best* current tutorial, documentation, or video for *each* specific weekly topic.
+- **Quality Filtering**: Prioritizes official docs and high-reputation educational platforms.
+
+### 5. Execution Dashboard
+- **Interactive Roadmap**: A visual timeline allowing users to mark weeks as complete.
+- **Progress Tracking**: Real-time percentage feedback on career goal completion.
+
+## 🛠️ Tech Stack
+
+### Frontend (The Interface)
+- **Framework**: Next.js 16.1.1 (App Router)
+- **Runtime**: React 19.2.3
+- **Styling**: Tailwind CSS 4.0 (Amber/Zinc palette)
+- **Animations**: Framer Motion
+- **Components**: Radix UI + Custom "Baryon" Loaders
+
+### Backend (The Engine)
+- **Framework**: FastAPI (Python 3.10+)
+- **AI**: OpenRouter (xiaomi/mimo-v2-flash:free) with Gemini-2.0 fallbacks
+- **Database**: MongoDB Atlas (Production) / Mock DB (Development)
+- **Search**: DuckDuckGo Search API for resource enrichment
+
+## 🚀 Quick Start
+
+### 1. Engine Setup (Backend)
+
+The backend runs on port **8002** by default.
 
 ```bash
 cd backend
-
-# Create and activate virtual environment
 python -m venv venv
 # Windows:
 .\venv\Scripts\activate
-# Mac/Linux:
-source venv/bin/activate
-
 # Install dependencies
 pip install -r requirements.txt
-
-# Start the server
-uvicorn main:app --reload --port 8000
+# Start the engine
+uvicorn main:app --reload --port 8002
 ```
 
-> **Note:** The backend automatically enters **Simulation Mode** if no API keys are found. It uses in-memory storage and mock AI responses, so you can test the entire UI flow immediately.
-
-### 2. Frontend Setup (Next.js)
-
-The frontend provides the "hacker-aesthetic" command interface.
+### 2. Interface Setup (Frontend)
 
 ```bash
 cd frontend
-
-# Install dependencies
 npm install
-
-# Start the development server
 npm run dev
 ```
+Access the system at [http://localhost:3000](http://localhost:3000).
 
-Open [http://localhost:3000](http://localhost:3000) to initiate the protocol.
+## 🔧 Environment Configuration
 
-## 🔧 Configuration (.env)
-
-Create a `.env` file in the `backend/` directory to enable full functionality:
+Configure your `.env` in the `backend/` directory:
 
 ```ini
-# backend/.env
+# AI Provider
+OPENROUTER_API_KEY=sk-or-v1-...
 
-# AI Model Provider (OpenRouter)
-OPENROUTER_API_KEY=sk-or-v1-... 
-
-# Database (MongoDB Atlas)
+# Persistence
 MONGODB_URL=mongodb+srv://...
 
 # Security
-SECRET_KEY=your_secret_key
+SECRET_KEY=pathos_secret_alpha_v2
 ALGORITHM=HS256
 ```
 
-## 🧪 Simulation Mode
+## 💎 Design Language
 
-The system is built for resilience. If external services fail, Career_OS degrades gracefully:
+- **Accent**: Golden Yellow (`amber-500`) for primary highlights and status indicators.
+- **Contrast**: Hollow-Solid typography using character scrambling animations.
+- **Interactivity**: Custom reactive cursor with expansion rings and crosshairs.
+- **Feedback**: "Baryon" loaders (pulsing geometric squares) replacing traditional spinners.
 
-1.  **Missing DB**: Automatically switches to in-memory `MOCK_USERS` and `MOCK_ROADMAPS`.
-2.  **Missing API Key**: Generates a high-fidelity "Simulated Roadmap" with pre-calculated steps and hardcoded, high-value resource links.
-3.  **Search Failure**: If the resource link search fails, the frontend renders a fallback "Search on Google" smart link.
+## 🛡️ Simulation Mode
 
-## 📜 API Endpoints
-
-*   `POST /register` & `/login`: JWT Authentication (Mock or Real).
-*   `POST /generate-roadmap`: Triggers the AI agent to build a custom protocol.
-    *   *Input*: Role, Salary Goal, Timeline, Skills, Bandwidth.
-    *   *Output*: JSON Roadmap with enriched Resource objects.
-*   `GET /roadmap`: Retrieves the active protocol.
-*   `PUT /roadmap/progress`: Updates completion status.
-
-## 🤝 Contributing
-
-1.  Fork the repository.
-2.  Create a feature branch (`git checkout -b feature/module-x`).
-3.  Commit your changes (`git commit -m 'Add Module X'`).
-4.  Push to the branch (`git push origin feature/module-x`).
-5.  Open a Pull Request.
+If `OPENROUTER_API_KEY` or `MONGODB_URL` are missing, PathOS enters **SIMULATION MODE**:
+1.  **Mock Persistence**: User data is stored in volatile memory.
+2.  **Predictive Roadmaps**: Uses high-fidelity pre-calculated protocols for major engineering roles.
+3.  **Static Enrichment**: Serves a curated set of verified high-quality resource links.
 
 ---
 
