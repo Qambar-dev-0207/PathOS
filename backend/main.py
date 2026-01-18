@@ -29,7 +29,8 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:8002", "https://path-os.netlify.app"], # Specific origins for credentials
+    allow_origins=["http://localhost:3000", "http://localhost:8002"],
+    allow_origin_regex=r"https://.*\.netlify\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
