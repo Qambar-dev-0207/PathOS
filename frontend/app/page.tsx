@@ -77,7 +77,7 @@ export default function Home() {
                 <div className="flex flex-col items-center gap-0">
                     <div className="relative group">
                         <DecryptedText 
-                            text="FAST_TRACK" 
+                            text="ENGINEER" 
                             className="stroke-text-bold hover:text-white transition-colors duration-200" 
                             speed={40}
                             maxIterations={20}
@@ -87,10 +87,10 @@ export default function Home() {
                     <div className="relative">
                         <span className="absolute -inset-2 bg-gradient-to-r from-amber-500/0 via-amber-500/20 to-amber-500/0 opacity-0 animate-pulse blur-xl" />
                         <DecryptedText 
-                            text="YOUR_CAREER" 
+                            text="YOUR_WEALTH" 
                             className="text-white drop-shadow-[0_0_25px_rgba(255,255,255,0.2)]"
                             speed={60}
-                            maxIterations={30}
+                            maxIterations={20}
                             revealDelay={400}
                         />
                     </div>
@@ -164,7 +164,6 @@ export default function Home() {
                               <div className="font-mono text-xs text-zinc-600 text-right space-y-1">
                                  <div>[STATUS]: ONLINE</div>
                                  <div>[UPTIME]: 99.99%</div>
-                                 <div>[USERS]: 14,000+</div>
                               </div>
                             </div>
               
