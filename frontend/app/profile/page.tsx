@@ -211,6 +211,67 @@ function UserProfileDashboard({ user }: { user: UserData | null }) {
     );
 }
 
+// --- Sub-Component: Loading Overlay ---
+function LoadingOverlay() {
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center"
+    >
+      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
+      
+      <div className="relative space-y-8 max-w-md w-full">
+        <div className="flex justify-center">
+            <BaryonLoader className="scale-[2] text-amber-500" />
+        </div>
+        
+        <div className="space-y-4">
+            <motion.h2 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-3xl font-bold tracking-tighter uppercase text-white"
+            >
+                INITIALIZING PATH_OS
+            </motion.h2>
+            
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="space-y-2"
+            >
+                <p className="text-amber-500 font-mono text-xs uppercase tracking-[0.2em] animate-pulse">
+                    Synthesizing Career Trajectory...
+                </p>
+                <p className="text-zinc-500 font-mono text-[10px] uppercase leading-relaxed">
+                    Our AI models are currently analyzing technical market trends and calibrating your personalized roadmap. This process typically takes 15-30 seconds.
+                </p>
+            </motion.div>
+        </div>
+
+        {/* Fake Terminal Output */}
+        <div className="bg-zinc-900/50 border border-white/5 p-4 rounded-lg font-mono text-[9px] text-zinc-600 text-left overflow-hidden h-32 relative">
+            <div className="space-y-1 animate-in slide-in-from-bottom-full duration-[10000ms] repeat-infinite">
+                <div>&gt; REQUESTING_OPENROUTER_UPLINK... [OK]</div>
+                <div>&gt; ANALYZING_MARKET_DYNAMICS... [DONE]</div>
+                <div>&gt; EXTRACTING_SKILL_GAPS... [PROCESSING]</div>
+                <div>&gt; CALIBRATING_VELOCITY_VECTORS... [OK]</div>
+                <div>&gt; INJECTING_RESOURCE_METADATA... [QUEUED]</div>
+                <div>&gt; COMPILING_WEEK_1_FOUNDATIONS... [OK]</div>
+                <div>&gt; GENERATING_CHALLENGE_MODULES... [OK]</div>
+                <div>&gt; OPTIMIZING_RETENTION_CYCLES... [OK]</div>
+                <div>&gt; FINALIZING_JSON_HANDSHAKE... [WAITING]</div>
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 to-transparent pointer-events-none" />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 // --- Sub-Component: Onboarding Wizard (Logic moved here) ---
 const QUESTIONS = [
   {
@@ -255,6 +316,7 @@ function OnboardingWizard() {
   const router = useRouter();
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false);
   const [formData, setFormData] = useState<any>({
     target_role: "",
     salary_range: "",
@@ -295,6 +357,7 @@ function OnboardingWizard() {
   const handleSubmit = async () => {
     if (loading) return;
     setLoading(true);
+    setShowOverlay(true);
     
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
     
@@ -302,6 +365,7 @@ function OnboardingWizard() {
       alert("Session expired. Please login.");
       router.push("/login");
       setLoading(false);
+      setShowOverlay(false);
       return;
     }
 
@@ -346,6 +410,7 @@ function OnboardingWizard() {
       router.push("/roadmap");
     } catch (error: any) {
       console.error(error);
+      setShowOverlay(false);
       if (error.name === 'AbortError') {
         alert("Request timed out. The AI is taking too long.");
       } else {
@@ -360,6 +425,10 @@ function OnboardingWizard() {
 
   return (
     <div className="flex flex-col flex-1 h-full relative">
+       <AnimatePresence>
+         {showOverlay && <LoadingOverlay />}
+       </AnimatePresence>
+
        {/* Minimal Header for Wizard Step */}
        <div className="absolute top-0 right-0 p-4 sm:p-8 flex items-center gap-2 font-mono text-sm text-zinc-500 z-40">
             {currentQIndex + 1} <span className="text-white">/</span> {QUESTIONS.length}
