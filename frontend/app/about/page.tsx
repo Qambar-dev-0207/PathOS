@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-black text-white p-8 md:p-12 relative overflow-x-hidden flex flex-col font-mono selection:bg-amber-500 selection:text-black">
+    <div className="min-h-screen bg-black text-white p-4 md:p-12 relative overflow-x-hidden flex flex-col font-mono selection:bg-amber-500 selection:text-black">
       {/* Background elements */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.05] pointer-events-none fixed" />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none" />

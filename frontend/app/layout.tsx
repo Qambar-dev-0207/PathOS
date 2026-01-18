@@ -33,7 +33,7 @@ export default function RootLayout({
             Tailwind 'dark:' prefix works if 'darkMode: "class"' is set (default in v4/late v3).
         */}
         <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center opacity-50 dark:opacity-100 [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-        <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <main className="relative z-10">
           {children}
         </main>
       </body>

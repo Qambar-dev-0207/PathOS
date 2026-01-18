@@ -36,7 +36,7 @@ function ProfileHeader() {
     };
 
     return (
-        <header className="p-8 flex justify-between items-center z-50 relative bg-zinc-950/80 backdrop-blur-sm sticky top-0 border-b border-white/5">
+        <header className="p-4 sm:p-8 flex justify-between items-center z-50 relative bg-zinc-950/80 backdrop-blur-sm sticky top-0 border-b border-white/5">
             <div className="flex items-center gap-6">
                 <Link href="/">
                     <Button variant="ghost" className="pl-0 hover:bg-transparent text-zinc-500 hover:text-white">
@@ -155,7 +155,7 @@ function UserProfileDashboard({ user }: { user: UserData | null }) {
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
                     {/* Status Card */}
-                    <div className="p-8 border border-white/10 bg-zinc-900/20 backdrop-blur-sm rounded-lg relative overflow-hidden group hover:border-amber-500/30 transition-colors">
+                    <div className="p-6 sm:p-8 border border-white/10 bg-zinc-900/20 backdrop-blur-sm rounded-lg relative overflow-hidden group hover:border-amber-500/30 transition-colors">
                         <div className="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity">
                             <Activity className="w-6 h-6 text-zinc-600 group-hover:text-amber-500" />
                         </div>
@@ -170,7 +170,7 @@ function UserProfileDashboard({ user }: { user: UserData | null }) {
                     </div>
 
                     {/* Network Card */}
-                    <div className="p-8 border border-white/10 bg-zinc-900/20 backdrop-blur-sm rounded-lg relative overflow-hidden group hover:border-emerald-500/30 transition-colors">
+                    <div className="p-6 sm:p-8 border border-white/10 bg-zinc-900/20 backdrop-blur-sm rounded-lg relative overflow-hidden group hover:border-emerald-500/30 transition-colors">
                         <div className="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity">
                             <Users className="w-6 h-6 text-zinc-600 group-hover:text-emerald-500" />
                         </div>
@@ -185,7 +185,7 @@ function UserProfileDashboard({ user }: { user: UserData | null }) {
                     </div>
 
                     {/* Identity Card */}
-                    <div className="p-8 border border-white/10 bg-zinc-900/20 backdrop-blur-sm rounded-lg relative overflow-hidden group hover:border-white/20 transition-colors">
+                    <div className="p-6 sm:p-8 border border-white/10 bg-zinc-900/20 backdrop-blur-sm rounded-lg relative overflow-hidden group hover:border-white/20 transition-colors">
                             <div className="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity">
                             <User className="w-6 h-6 text-zinc-600 group-hover:text-white" />
                         </div>
@@ -361,7 +361,7 @@ function OnboardingWizard() {
   return (
     <div className="flex flex-col flex-1 h-full relative">
        {/* Minimal Header for Wizard Step */}
-       <div className="absolute top-0 right-0 p-8 flex items-center gap-2 font-mono text-sm text-zinc-500 z-40">
+       <div className="absolute top-0 right-0 p-4 sm:p-8 flex items-center gap-2 font-mono text-sm text-zinc-500 z-40">
             {currentQIndex + 1} <span className="text-white">/</span> {QUESTIONS.length}
        </div>
 
@@ -406,7 +406,7 @@ function OnboardingWizard() {
               </motion.div>
             </AnimatePresence>
 
-            <div className="fixed bottom-0 left-0 right-0 p-8 sm:p-12 flex justify-between items-end bg-zinc-950/80 backdrop-blur-sm border-t border-white/5">
+            <div className="fixed bottom-0 left-0 right-0 p-4 sm:p-12 flex justify-between items-end bg-zinc-950/80 backdrop-blur-sm border-t border-white/5">
                <Button 
                  variant="ghost" 
                  onClick={handleBack} 

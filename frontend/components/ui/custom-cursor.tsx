@@ -18,8 +18,17 @@ export const CustomCursor = () => {
   const cursorY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
-    // Only show custom cursor on devices that support hover
-    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    // Check if the device is likely a mobile/touch device
+    const checkIsMobile = () => {
+      const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isSmallScreen = window.innerWidth < 1024;
+      const pointerFine = window.matchMedia("(pointer: fine)").matches;
+      
+      // We only show custom cursor if it's NOT a touch device AND has a fine pointer AND is a large screen
+      return (hasTouch || isSmallScreen) && !pointerFine;
+    };
+
+    if (!checkIsMobile()) {
       setIsVisible(true);
     }
 

@@ -39,7 +39,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col noise-bg">
-      <header className="p-8 flex justify-between items-center z-50">
+      <header className="p-4 sm:p-8 flex justify-between items-center z-50">
         <Link href="/">
           <Button variant="ghost" className="pl-0 hover:bg-transparent text-zinc-500 hover:text-white">
             <ArrowLeft className="mr-2 w-4 h-4" /> RETURN

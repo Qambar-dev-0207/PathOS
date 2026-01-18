@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CheckCircle2, RefreshCw, ArrowUpRight, Target, Clock, Terminal, Search, BrainCircuit, X, Check, AlertCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, RefreshCw, ArrowUpRight, Target, Clock, Terminal, Search, BrainCircuit, X, Check, AlertCircle, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { BaryonLoader } from "@/components/ui/baryon-loader";
@@ -39,6 +39,7 @@ export default function RoadmapPage() {
   const [data, setData] = useState<RoadmapData | null>(null);
   const [selectedStep, setSelectedStep] = useState<RoadmapStep | null>(null);
   const [user, setUser] = useState<{ id: string, name: string } | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Quiz State
   const [quizOpen, setQuizOpen] = useState(false);
@@ -238,15 +239,18 @@ export default function RoadmapPage() {
     <div className="min-h-screen bg-zinc-950 text-white flex flex-col overflow-hidden font-sans selection:bg-white selection:text-black">
       
       {/* Top HUD */}
-      <header className="h-16 border-b border-white/10 flex items-center justify-between px-6 bg-black/50 backdrop-blur-md z-40">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.push("/profile")} className="text-zinc-500 hover:text-white">
+      <header className="h-16 border-b border-white/10 flex items-center justify-between px-4 sm:px-6 bg-black/50 backdrop-blur-md z-40">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Button variant="ghost" size="icon" onClick={() => router.push("/profile")} className="text-zinc-500 hover:text-white shrink-0">
              <ArrowLeft className="w-5 h-5" />
           </Button>
-          <div className="h-6 w-px bg-white/10" />
-          <div className="flex items-center gap-2">
-            <Target className="w-4 h-4 text-white" />
-            <span className="font-mono text-sm font-bold tracking-tight uppercase">{data.role} Protocol</span>
+          <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden text-zinc-500 hover:text-white shrink-0">
+             <Menu className="w-5 h-5" />
+          </Button>
+          <div className="h-6 w-px bg-white/10 hidden sm:block" />
+          <div className="flex items-center gap-2 min-w-0">
+            <Target className="w-4 h-4 text-white shrink-0" />
+            <span className="font-mono text-sm font-bold tracking-tight uppercase truncate">{data.role} Protocol</span>
           </div>
         </div>
         
@@ -278,8 +282,8 @@ export default function RoadmapPage() {
 
       <div className="flex-1 flex overflow-hidden">
         
-        {/* Left Sidebar - Timeline */}
-        <aside className="w-72 bg-black border-r border-white/10 flex flex-col z-20 flex-shrink-0 overflow-hidden h-[calc(100vh-4rem)] sticky top-16">
+        {/* Left Sidebar - Desktop */}
+        <aside className="hidden md:flex w-72 bg-black border-r border-white/10 flex-col z-20 flex-shrink-0 overflow-hidden h-[calc(100vh-4rem)] sticky top-16">
            <div className="p-4 border-b border-white/5 bg-zinc-900/50">
               <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">Execution Phase</h3>
            </div>
@@ -318,6 +322,69 @@ export default function RoadmapPage() {
               ))}
            </div>
         </aside>
+
+        {/* Mobile Sidebar Drawer */}
+        <AnimatePresence>
+            {mobileMenuOpen && (
+                <>
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 md:hidden"
+                    />
+                    <motion.aside 
+                        initial={{ x: "-100%" }}
+                        animate={{ x: 0 }}
+                        exit={{ x: "-100%" }}
+                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                        className="fixed inset-y-0 left-0 w-4/5 max-w-xs bg-black border-r border-white/10 z-50 flex flex-col md:hidden"
+                    >
+                        <div className="p-4 border-b border-white/5 bg-zinc-900/50 flex justify-between items-center">
+                            <h3 className="text-xs font-mono uppercase tracking-widest text-zinc-500">Execution Phase</h3>
+                            <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)} className="h-6 w-6">
+                                <X className="w-4 h-4" />
+                            </Button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+                            {data.steps.map((step) => (
+                                <button
+                                key={step.week}
+                                onClick={() => { setSelectedStep(step); setMobileMenuOpen(false); }}
+                                className={cn(
+                                    "w-full text-left relative p-3 rounded-lg border transition-all duration-200 group",
+                                    selectedStep.week === step.week 
+                                    ? "bg-zinc-900 border-white/20 z-10" 
+                                    : "bg-transparent border-transparent hover:bg-zinc-900/30 hover:border-white/5"
+                                )}
+                                >
+                                <div className="flex items-center gap-3">
+                                    <div className={cn(
+                                    "w-6 h-6 rounded flex-shrink-0 flex items-center justify-center text-[10px] font-mono border transition-colors",
+                                    step.completed ? "bg-white text-black border-white" : "bg-zinc-950 text-zinc-500 border-zinc-800 group-hover:border-zinc-700"
+                                    )}>
+                                    {step.completed ? <CheckCircle2 className="w-3 h-3" /> : step.week}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className={cn(
+                                            "text-sm font-medium truncate transition-colors",
+                                            selectedStep.week === step.week ? "text-white" : "text-zinc-400 group-hover:text-zinc-200"
+                                        )}>
+                                            {step.title}
+                                        </div>
+                                    </div>
+                                </div>
+                                {step.week !== data.steps.length && (
+                                    <div className="absolute left-[23px] top-8 bottom-[-8px] w-px bg-zinc-800 -z-10" />
+                                )}
+                                </button>
+                            ))}
+                        </div>
+                    </motion.aside>
+                </>
+            )}
+        </AnimatePresence>
 
         {/* Main Content Area */}
         <main className="flex-1 relative bg-zinc-950 flex flex-col overflow-y-auto h-[calc(100vh-4rem)]">
