@@ -108,23 +108,6 @@ export default function RegisterPage() {
             >
               {loading ? <BaryonLoader /> : "INITIALIZE PROFILE"}
             </Button>
-
-            <div className="relative py-2">
-                <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-white/10" />
-                </div>
-                <div className="relative flex justify-center text-[10px] uppercase">
-                    <span className="bg-black px-2 text-zinc-500 font-mono tracking-widest">Alternative Uplink</span>
-                </div>
-            </div>
-
-            <Button 
-              type="button"
-              onClick={() => window.location.href = "http://localhost:8002/auth/google/login"}
-              className="w-full h-14 bg-zinc-900 text-zinc-300 hover:bg-zinc-800 border border-white/10 text-sm font-mono tracking-widest uppercase"
-            >
-              Initialize via Google
-            </Button>
           </form>
 
           <div className="bg-zinc-900/50 border border-white/10 p-4 rounded flex items-start gap-4">

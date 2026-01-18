@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
-from fastapi_sso.sso.google import GoogleSSO
 from pydantic import BaseModel
 from typing import List, Optional
 import os
@@ -41,20 +40,6 @@ OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 SECRET_KEY = os.getenv("SECRET_KEY", "fallback_secret_key_for_dev_only")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
-
-# --- Google Auth Config ---
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
-GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-# Ensure redirect_uri matches what is registered in Google Cloud Console
-# For local dev, typically http://localhost:8002/auth/google/callback
-google_sso = None
-if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
-    google_sso = GoogleSSO(
-        client_id=GOOGLE_CLIENT_ID,
-        client_secret=GOOGLE_CLIENT_SECRET,
-        redirect_uri="http://localhost:8002/auth/google/callback",
-        allow_insecure_http=True
-    )
 
 # Initialize OpenAI Client for OpenRouter
 client = None
@@ -274,74 +259,6 @@ async def login(user: UserLogin):
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     return {"access_token": access_token, "token_type": "bearer"}
-
-# --- Google Auth Routes ---
-
-@app.get("/auth/google/login")
-async def google_login():
-    if not google_sso:
-        # Graceful error for UI
-        raise HTTPException(status_code=500, detail="Google Auth not configured (Check Server Logs)")
-    return await google_sso.get_login_redirect()
-
-@app.get("/auth/google/callback")
-async def google_callback(request: Request):
-    if not google_sso:
-        raise HTTPException(status_code=500, detail="Google Auth not configured")
-        
-    try:
-        user_info = await google_sso.verify_and_process(request)
-        if not user_info or not user_info.email:
-             raise HTTPException(status_code=400, detail="Google Auth failed: No email returned")
-             
-        log_debug(f"Google Auth Success: {user_info.email}")
-        
-        # Check DB
-        existing_user = None
-        try:
-            existing_user = await db.users.find_one({"email": user_info.email})
-        except Exception:
-            pass
-            
-        # Check Mock if not in DB (for consistency with rest of app)
-        if not existing_user:
-             existing_user = next((u for u in MOCK_USERS if u["email"] == user_info.email), None)
-
-        if not existing_user:
-            # Create User
-            new_password = secrets.token_urlsafe(16)
-            hashed_password = get_password_hash(new_password)
-            new_user_doc = {
-                "name": user_info.display_name or user_info.email.split('@')[0],
-                "email": user_info.email,
-                "hashed_password": hashed_password,
-                "provider": "google",
-                "avatar": user_info.picture,
-                "friends": [],
-                "friend_requests_sent": [],
-                "friend_requests_received": []
-            }
-            try:
-                await db.users.insert_one(new_user_doc)
-                log_debug(f"Created new Google user in DB: {user_info.email}")
-            except Exception as e:
-                log_debug(f"Google Register DB Error: {e}. Using Mock.")
-                # Mock Fallback
-                MOCK_USERS.append(new_user_doc)
-
-        # Generate Token
-        access_token = create_access_token(
-            data={"sub": user_info.email},
-            expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        )
-        
-        # Redirect to Frontend
-        return RedirectResponse(url=f"http://localhost:3000/auth/callback?token={access_token}")
-
-    except Exception as e:
-        log_debug(f"Google Callback Error: {e}")
-        # Redirect to login with error
-        return RedirectResponse(url=f"http://localhost:3000/login?error=GoogleAuthFailed")
 
 # --- Friend System Routes ---
 
