@@ -213,6 +213,26 @@ function UserProfileDashboard({ user }: { user: UserData | null }) {
 
 // --- Sub-Component: Loading Overlay ---
 function LoadingOverlay() {
+  const [activeStep, setActiveStep] = useState(0);
+  const logs = [
+    "REQUESTING_OPENROUTER_UPLINK",
+    "ANALYZING_MARKET_DYNAMICS",
+    "EXTRACTING_SKILL_GAPS",
+    "CALIBRATING_VELOCITY_VECTORS",
+    "INJECTING_RESOURCE_METADATA",
+    "COMPILING_WEEK_1_FOUNDATIONS",
+    "GENERATING_CHALLENGE_MODULES",
+    "OPTIMIZING_RETENTION_CYCLES",
+    "FINALIZING_JSON_HANDSHAKE"
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev < logs.length - 1 ? prev + 1 : prev));
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [logs.length]);
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -252,18 +272,17 @@ function LoadingOverlay() {
             </motion.div>
         </div>
 
-        {/* Fake Terminal Output */}
-        <div className="bg-zinc-900/50 border border-white/5 p-4 rounded-lg font-mono text-[9px] text-zinc-600 text-left overflow-hidden h-32 relative">
-            <div className="space-y-1 animate-in slide-in-from-bottom-full duration-[10000ms] repeat-infinite">
-                <div>&gt; REQUESTING_OPENROUTER_UPLINK... [OK]</div>
-                <div>&gt; ANALYZING_MARKET_DYNAMICS... [DONE]</div>
-                <div>&gt; EXTRACTING_SKILL_GAPS... [PROCESSING]</div>
-                <div>&gt; CALIBRATING_VELOCITY_VECTORS... [OK]</div>
-                <div>&gt; INJECTING_RESOURCE_METADATA... [QUEUED]</div>
-                <div>&gt; COMPILING_WEEK_1_FOUNDATIONS... [OK]</div>
-                <div>&gt; GENERATING_CHALLENGE_MODULES... [OK]</div>
-                <div>&gt; OPTIMIZING_RETENTION_CYCLES... [OK]</div>
-                <div>&gt; FINALIZING_JSON_HANDSHAKE... [WAITING]</div>
+        {/* Dynamic Terminal Output */}
+        <div className="bg-zinc-900/50 border border-white/5 p-4 rounded-lg font-mono text-[9px] text-zinc-600 text-left overflow-hidden h-40 relative">
+            <div className="space-y-1">
+                {logs.map((log, i) => (
+                    <div key={i} className={cn(
+                        "transition-colors duration-500",
+                        i === activeStep ? "text-amber-500" : i < activeStep ? "text-emerald-500/50" : "text-zinc-700"
+                    )}>
+                        &gt; {log}... {i < activeStep ? "[OK]" : i === activeStep ? "[PROCESSING]" : "[WAITING]"}
+                    </div>
+                ))}
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 to-transparent pointer-events-none" />
         </div>
