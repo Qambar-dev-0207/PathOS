@@ -321,20 +321,35 @@ export default function Home() {
                     </div>
                  </div>
                  
-                 <div className="grid grid-cols-2 md:grid-cols-4 gap-16 text-sm font-mono text-zinc-500 uppercase tracking-widest">
-                    <div className="flex flex-col gap-4">
-                       <span className="text-white text-xs mb-2 border-b border-white/10 pb-2 w-fit">Module</span>
-                       <Link href="/manifesto" className="hover:text-amber-500 transition-colors">Manifesto</Link>
-                       <Link href="/protocol" className="hover:text-amber-500 transition-colors">Protocol</Link>
-                       <Link href="/access" className="hover:text-amber-500 transition-colors">Pricing</Link>
-                    </div>
-                    <div className="flex flex-col gap-4">
-                       <span className="text-white text-xs mb-2 border-b border-white/10 pb-2 w-fit">Connect</span>
-                       <Link href="#" className="hover:text-amber-500 transition-colors">Twitter</Link>
-                       <Link href="#" className="hover:text-amber-500 transition-colors">GitHub</Link>
-                       <Link href="#" className="hover:text-amber-500 transition-colors">Discord</Link>
-                    </div>
-                    <div className="flex flex-col gap-4">
+                                  <div className="grid grid-cols-2 md:grid-cols-4 gap-16 text-sm font-mono text-zinc-500 uppercase tracking-widest">
+                 
+                                     <div className="flex flex-col gap-4">
+                 
+                                        <span className="text-white text-xs mb-2 border-b border-white/10 pb-2 w-fit">Module</span>
+                 
+                                        <Link href="/manifesto" className="hover:text-amber-500 transition-colors">Manifesto</Link>
+                 
+                                        <Link href="/protocol" className="hover:text-amber-500 transition-colors">Protocol</Link>
+                 
+                                        <Link href="/access" className="hover:text-amber-500 transition-colors">Pricing</Link>
+                 
+                                        <Link href="/contact" className="hover:text-amber-500 transition-colors text-amber-500/80 font-bold">Contact Us</Link>
+                 
+                                     </div>
+                 
+                                     <div className="flex flex-col gap-4">
+                 
+                                        <span className="text-white text-xs mb-2 border-b border-white/10 pb-2 w-fit">Connect</span>
+                 
+                                        <Link href="https://x.com/__Qambar__" target="_blank" className="hover:text-amber-500 transition-colors">Twitter</Link>
+                 
+                                        <Link href="https://github.com/Qambar-dev-0207" target="_blank" className="hover:text-amber-500 transition-colors">GitHub</Link>
+                 
+                                        <Link href="https://linkedin.com/in/mohammed-qambar-0466132b9" target="_blank" className="hover:text-amber-500 transition-colors">LinkedIn</Link>
+                 
+                                        <Link href="https://qambars-portfolio.netlify.app" target="_blank" className="hover:text-amber-500 transition-colors text-amber-500 font-bold">Portfolio</Link>
+                 
+                                     </div>                    <div className="flex flex-col gap-4">
                        <span className="text-white text-xs mb-2 border-b border-white/10 pb-2 w-fit">Legal</span>
                        <Link href="#" className="hover:text-amber-500 transition-colors">Terms</Link>
                        <Link href="#" className="hover:text-amber-500 transition-colors">Privacy</Link>
