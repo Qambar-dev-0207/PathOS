@@ -38,11 +38,11 @@ export default function ContactPage() {
               animate={{ opacity: 1, x: 0 }}
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/20 bg-amber-500/5 text-amber-500 text-[10px] tracking-[0.2em] uppercase"
             >
-              Communication Uplink Active
+              We're Ready to Chat
             </motion.div>
 
             <h1 className="text-5xl md:text-7xl font-bold tracking-tighter uppercase leading-none">
-              CONTACT <span className="text-zinc-800 outline-text">PATH_OS</span>
+              Get in <span className="text-zinc-800 outline-text">Touch</span>
             </h1>
 
             <p className="text-zinc-400 leading-relaxed font-sans text-lg">
@@ -65,7 +65,7 @@ export default function ContactPage() {
                   <MessageSquare className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-[10px] text-zinc-600 uppercase tracking-widest">Social_Frequency</div>
+                  <div className="text-[10px] text-zinc-600 uppercase tracking-widest">Social Media</div>
                   <div className="text-zinc-300">@__Qambar__</div>
                 </div>
               </div>
@@ -84,43 +84,43 @@ export default function ContactPage() {
                 <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500 mb-4">
                   <Shield className="w-8 h-8" />
                 </div>
-                <h3 className="text-2xl font-bold uppercase tracking-tight">Transmission Received</h3>
+                <h3 className="text-2xl font-bold uppercase tracking-tight">Message Sent</h3>
                 <p className="text-zinc-400 text-sm font-sans">
-                  Your message has been decrypted and queued for review. Expect a response on this frequency soon.
+                  We've received your message and will get back to you shortly.
                 </p>
                 <Button 
                   onClick={() => setSubmitted(false)}
                   variant="outline" 
                   className="mt-8 border-emerald-500/30 text-emerald-500 hover:bg-emerald-500 hover:text-black transition-all"
                 >
-                  SEND ANOTHER
+                  Send Another
                 </Button>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4 border border-white/10 bg-zinc-900/20 backdrop-blur-xl p-8 rounded-2xl relative z-10">
                 <div className="space-y-2">
-                  <label className="text-[10px] text-zinc-500 uppercase tracking-[0.2em]">Identification</label>
+                  <label className="text-[10px] text-zinc-500 uppercase tracking-[0.2em]">Name</label>
                   <Input 
                     required 
-                    placeholder="NAME / OPERATOR_ID" 
+                    placeholder="Your Name" 
                     className="bg-black/50 border-white/5 focus:border-amber-500/50 rounded-lg h-12 font-mono text-sm"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] text-zinc-500 uppercase tracking-[0.2em]">Return Frequency</label>
+                  <label className="text-[10px] text-zinc-500 uppercase tracking-[0.2em]">Your Email</label>
                   <Input 
                     required 
                     type="email" 
-                    placeholder="EMAIL_ADDRESS" 
+                    placeholder="you@example.com" 
                     className="bg-black/50 border-white/5 focus:border-amber-500/50 rounded-lg h-12 font-mono text-sm"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] text-zinc-500 uppercase tracking-[0.2em]">Message Payload</label>
+                  <label className="text-[10px] text-zinc-500 uppercase tracking-[0.2em]">Your Message</label>
                   <textarea 
                     required 
                     rows={4}
-                    placeholder="ENTER YOUR ENCRYPTED MESSAGE..." 
+                    placeholder="How can we help you?" 
                     className="w-full bg-black/50 border border-white/5 focus:border-amber-500/50 outline-none p-4 rounded-lg font-mono text-sm resize-none transition-colors"
                   />
                 </div>
@@ -128,7 +128,7 @@ export default function ContactPage() {
                   type="submit"
                   className="w-full h-14 bg-white text-black hover:bg-amber-500 hover:text-black font-bold uppercase tracking-[0.2em] rounded-lg transition-all flex items-center justify-center gap-3"
                 >
-                  EXECUTE SEND <Send className="w-4 h-4" />
+                  Send Message <Send className="w-4 h-4" />
                 </Button>
               </form>
             )}

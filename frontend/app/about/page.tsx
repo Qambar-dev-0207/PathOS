@@ -33,7 +33,7 @@ export default function AboutPage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
               </span>
-              System Architect Identified
+              AI Engineer & Developer
             </motion.div>
 
             <div className="space-y-4">
@@ -46,7 +46,7 @@ export default function AboutPage() {
             </div>
 
             <p className="text-lg md:text-xl text-zinc-400 leading-relaxed max-w-2xl font-sans">
-              Aspiring AI Engineer with hands-on experience in building intelligent systems, automation workflows, and full-stack AI applications. Skilled in Python, computer vision, deep learning, backend engineering, and browser automation.
+              I am a Machine Learning and XR Developer with a passion for building intelligent systems. I specialize in Python, computer vision, and full-stack AI applications. I build tools that help people work smarter.
             </p>
           </div>
 
@@ -63,7 +63,7 @@ export default function AboutPage() {
                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
              />
              <div className="absolute bottom-4 -left-4 bg-amber-500 text-black px-2 py-1 text-[10px] font-bold uppercase tracking-tighter">
-                ID_0207_SECURE
+                Developer Profile
              </div>
           </motion.div>
         </section>
@@ -72,7 +72,7 @@ export default function AboutPage() {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-12 border-t border-white/5 pt-16">
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-zinc-500 uppercase tracking-widest text-xs">
-              <Cpu className="w-4 h-4" /> Neural_Engines
+              <Cpu className="w-4 h-4" /> AI & Machine Learning
             </div>
             <p className="text-zinc-300 text-sm leading-relaxed">
               TensorFlow, PyTorch, Scikit-learn, NLP, OpenCV, NumPy, Pandas. Expert in CNN architectures and transfer learning.
@@ -80,7 +80,7 @@ export default function AboutPage() {
           </div>
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-zinc-500 uppercase tracking-widest text-xs">
-              <Binary className="w-4 h-4" /> Core_Logic
+              <Binary className="w-4 h-4" /> Backend Development
             </div>
             <p className="text-zinc-300 text-sm leading-relaxed">
               FastAPI, Node.js, Python, Java, JavaScript. Specialized in high-performance backend systems and LLM integration.
@@ -88,7 +88,7 @@ export default function AboutPage() {
           </div>
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-zinc-500 uppercase tracking-widest text-xs">
-              <Zap className="w-4 h-4" /> Automation_Grid
+              <Zap className="w-4 h-4" /> Tools & Platforms
             </div>
             <p className="text-zinc-300 text-sm leading-relaxed">
               Playwright, Docker, Git, MongoDB, React.js. Building autonomous agents and scalable deployment pipelines.
@@ -122,7 +122,7 @@ export default function AboutPage() {
 
         <div className="pt-24 text-center">
             <p className="text-[10px] text-zinc-700 uppercase tracking-[0.5em]">
-                PathOS v1.0 // Built for the next era of technical excellence
+                PathOS // Helping engineers build better careers
             </p>
         </div>
       </main>

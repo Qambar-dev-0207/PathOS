@@ -16,40 +16,40 @@ export default function ProtocolPage() {
           </Button>
         </Link>
         <div className="font-mono text-xs uppercase tracking-widest text-zinc-500">
-          System Architecture v2.0
+          How We Work
         </div>
       </header>
 
       <main className="max-w-5xl mx-auto relative z-10">
         <div className="mb-24">
           <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-none mb-6">
-            THE <br/>PROTOCOL
+            OUR <br/>METHOD
           </h1>
           <p className="text-xl text-zinc-400 max-w-2xl leading-relaxed">
-            How we turn raw market data into your personal execution strategy.
+            How we turn job market data into your personal career plan.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <ProtocolCard 
             icon={<Cpu className="w-8 h-8" />}
-            title="01 / Signal Extraction"
-            description="Our engine scans thousands of job postings for your target role in real-time. We filter out 'nice-to-haves' to identify the critical 20% of skills that drive 80% of hiring decisions."
+            title="01 / Market Research"
+            description="Our system scans thousands of job postings for your target role. We identify the essential skills that employers are actually asking for, so you don't waste time learning irrelevant topics."
           />
           <ProtocolCard 
             icon={<Activity className="w-8 h-8" />}
-            title="02 / Gap Analysis"
-            description="We compare your current verified skill set against the market signal. The difference creates your 'Delta'—the exact distance between you and your target salary."
+            title="02 / Skill Assessment"
+            description="We compare your current skills against what the market needs. This helps us find your 'Skill Gap'—the specific things you need to learn to land your target job."
           />
           <ProtocolCard 
             icon={<Zap className="w-8 h-8" />}
-            title="03 / Velocity Planning"
-            description="We apply your time constraints (hours/week) to calculate the optimal learning velocity. The system prevents burnout by enforcing realistic milestones based on cognitive load theory."
+            title="03 / Smart Scheduling"
+            description="We create a realistic learning schedule based on your available free time. Whether you have 5 hours or 20 hours a week, we build a plan that fits your life without causing burnout."
           />
           <ProtocolCard 
             icon={<Layers className="w-8 h-8" />}
-            title="04 / Recursive Adaptation"
-            description="The roadmap isn't static. As you complete modules, the system re-evaluates your trajectory. Faster progress unlocks advanced modules; slower progress triggers reinforcement loops."
+            title="04 / Continuous Progress"
+            description="Your career roadmap adapts as you grow. As you complete modules and learn new skills, we update your plan to ensure you're always moving closer to your goal."
           />
         </div>
       </main>

@@ -22,39 +22,39 @@ export default function ManifestoPage() {
         <div className="space-y-16">
           <div>
             <div className="inline-block px-3 py-1 bg-white/10 rounded-full text-xs font-mono uppercase tracking-widest mb-6">
-              Statement of Intent
+              Our Mission
             </div>
             <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-none mb-8">
-              THE <br/>MANIFESTO
+              OUR <br/>MISSION
             </h1>
           </div>
 
           <div className="prose prose-invert prose-lg text-zinc-400 font-light leading-relaxed space-y-8 text-xl">
             <p>
-              <strong className="text-white">The old playbook is dead.</strong> The era of generic degrees, passive learning, and "waiting your turn" is over. We live in a hyper-efficient market where skills—provable, high-impact capabilities—are the only currency that matters.
+              <strong className="text-white">The job market has changed.</strong> Generic advice and passive learning aren't enough anymore. To land the best roles, you need specific, high-impact skills that companies are actually looking for.
             </p>
             <p>
-              Most career advice is noise. It's designed to keep you comfortable, not wealthy. It tells you to "follow your passion" while ignoring market realities. It encourages broad learning when depth is what commands a premium.
+              Traditional career advice can often be overwhelming and disconnected from reality. It tells you to learn everything, instead of focusing on what truly matters for your career growth.
             </p>
             <p>
-              <strong className="text-white">We built PathOS to cut the noise.</strong>
+              <strong className="text-white">We built PathOS to provide clarity.</strong>
             </p>
             <p>
-              This isn't a course. It's a weapon. We reverse-engineer the specific requirements of high-paying roles and build a bridge backward to where you stand today. Every week is a sprint. Every resource is vetted. Every milestone is a step closer to leverage.
+              We don't just give you a list of courses. We analyze real job descriptions to understand exactly what skills are in demand. Then, we create a personalized roadmap to help you bridge the gap between where you are and where you want to be.
             </p>
             <p>
               We believe in:
             </p>
             <ul className="list-disc pl-6 space-y-2 mt-4 marker:text-white">
-                <li><strong className="text-white">Outcome over Output:</strong> Don't just learn. Build.</li>
-                <li><strong className="text-white">Market Reality:</strong> Align with what pays, not just what's popular.</li>
-                <li><strong className="text-white">Speed of Execution:</strong> The faster you fail, the faster you win.</li>
+                <li><strong className="text-white">Focus on Results:</strong> Learn by building real projects, not just watching videos.</li>
+                <li><strong className="text-white">Data-Driven Decisions:</strong> Focus on skills that employers are actively hiring for.</li>
+                <li><strong className="text-white">Efficient Learning:</strong> Save time by focusing only on what you need to know.</li>
             </ul>
           </div>
 
           <div className="pt-12 border-t border-white/10">
             <p className="font-mono text-sm uppercase tracking-widest text-zinc-600">
-              End of Transmission
+              Start Your Journey
             </p>
           </div>
         </div>

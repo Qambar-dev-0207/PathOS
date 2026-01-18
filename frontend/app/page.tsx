@@ -77,7 +77,7 @@ export default function Home() {
                 <div className="flex flex-col items-center gap-0">
                     <div className="relative group">
                         <DecryptedText 
-                            text="ENGINEER" 
+                            text="FAST_TRACK" 
                             className="stroke-text-bold hover:text-white transition-colors duration-200" 
                             speed={40}
                             maxIterations={20}
@@ -87,7 +87,7 @@ export default function Home() {
                     <div className="relative">
                         <span className="absolute -inset-2 bg-gradient-to-r from-amber-500/0 via-amber-500/20 to-amber-500/0 opacity-0 animate-pulse blur-xl" />
                         <DecryptedText 
-                            text="YOUR_WEALTH" 
+                            text="YOUR_CAREER" 
                             className="text-white drop-shadow-[0_0_25px_rgba(255,255,255,0.2)]"
                             speed={60}
                             maxIterations={30}
@@ -103,8 +103,8 @@ export default function Home() {
                 transition={{ delay: 0.8, duration: 1 }}
                 className="mt-8 text-sm md:text-lg text-zinc-400 max-w-xl mx-auto font-mono leading-relaxed text-balance"
             >
-                <span className="text-amber-500">Warning:</span> Traditional career paths detected as inefficient. 
-                We reverse-engineer high-frequency opportunities into an executable kernel.
+                <span className="text-amber-500">Stop guessing.</span> We build a personalized, step-by-step AI career roadmap to help you get hired by top tech companies. 
+                Based on real job market data and your schedule.
             </motion.p>
 
             <div className="mt-12 flex flex-col sm:flex-row items-center gap-6 relative z-30">
@@ -113,7 +113,7 @@ export default function Home() {
                    <Button size="lg" className="relative h-14 px-10 bg-white text-black hover:bg-amber-400 hover:text-black text-sm md:text-base tracking-widest font-bold uppercase rounded-none border-2 border-transparent hover:border-black/10 w-full sm:w-auto transition-all duration-300 transform group-hover:-translate-y-1 overflow-hidden">
                       <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 mix-blend-difference" />
                       <span className="relative z-10 flex items-center gap-2">
-                        Initialize <Terminal className="w-4 h-4" />
+                        Get Your Roadmap <Terminal className="w-4 h-4" />
                       </span>
                    </Button>
                 </Link>
@@ -121,7 +121,7 @@ export default function Home() {
                 <Link href="/about" className="group">
                    <span className="text-xs font-mono uppercase tracking-widest text-zinc-500 group-hover:text-white transition-colors flex items-center gap-2">
                       <span className="w-4 h-[1px] bg-zinc-700 group-hover:w-8 group-hover:bg-white transition-all" />
-                      Read The Manifesto
+                      Learn More
                    </span>
                 </Link>
             </div>
@@ -147,180 +147,178 @@ export default function Home() {
            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.07] pointer-events-none" />
            
            <div className="max-w-[1600px] mx-auto px-6 sm:px-12 py-32">
-              <div className="flex flex-col md:flex-row justify-between items-end mb-32 gap-8 border-b border-white/10 pb-12">
-                <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-amber-500 font-mono text-xs uppercase tracking-widest mb-4">
-                        <Activity className="w-4 h-4" /> System Analysis
-                    </div>
-                    <motion.h2 
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        className="text-4xl md:text-7xl font-bold tracking-tighter uppercase font-sans"
-                    >
-                        Core <span className="text-zinc-800 stroke-text">Architecture</span>
-                    </motion.h2>
-                </div>
-                <div className="font-mono text-xs text-zinc-600 text-right space-y-1">
-                   <div>[STATUS]: OPTIMAL</div>
-                   <div>[UPTIME]: 99.99%</div>
-                   <div>[NODES]: 14,002</div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[350px] gap-6">
-                 {/* Card 1: Large Feature (Reverse Engineered) */}
-                 <BentoCard 
-                    title="Reverse Engineered"
-                    desc="We parse thousands of job descriptions to extract the exact signal-to-noise ratio of skills."
-                    icon={<Cpu className="w-6 h-6 text-white" />}
-                    delay={0.1}
-                    className="md:col-span-2 md:row-span-2 bg-zinc-900/30 border-zinc-800"
-                 >
-                    {/* Visual Mockup: Skills Graph */}
-                    <div className="absolute inset-0 z-0">
-                        <div className="absolute bottom-0 left-0 right-0 h-3/4 flex items-end justify-between px-8 pb-8 gap-2 opacity-50">
-                            {[40, 70, 45, 90, 60, 80, 50, 95, 30, 60].map((h, i) => (
-                                <motion.div 
-                                    key={i}
-                                    initial={{ height: 0 }}
-                                    whileInView={{ height: `${h}%` }}
-                                    transition={{ duration: 1.5, delay: 0.2 + (i * 0.05), ease: "circOut" }}
-                                    className="w-full bg-gradient-to-t from-zinc-800 to-zinc-600 hover:from-amber-600 hover:to-amber-400 transition-colors rounded-t-sm relative group"
-                                >
-                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-[9px] opacity-0 group-hover:opacity-100 transition-opacity font-mono text-amber-500 bg-black/80 px-2 py-1 border border-amber-500/20 rounded">
-                                        {h}%
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-                    </div>
-                 </BentoCard>
-
-                 {/* Card 2: Tall Feature (Adaptive Velocity) */}
-                 <BentoCard 
-                    title="Adaptive Velocity"
-                    desc="Miss a week? The system recalibrates. Ahead of schedule? The difficulty ramps up."
-                    icon={<Activity className="w-6 h-6 text-amber-500" />}
-                    delay={0.2}
-                    className="md:col-span-1 md:row-span-2 bg-zinc-950 border-amber-500/20"
-                 >
-                    <div className="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
-                         <div className="w-56 h-56 border border-dashed border-zinc-700 rounded-full animate-[spin_60s_linear_infinite]" />
-                         <div className="absolute w-40 h-40 border-2 border-amber-500/20 rounded-full animate-[spin_20s_linear_infinite_reverse] border-t-amber-500" />
-                         <div className="absolute w-24 h-24 bg-amber-500/10 blur-2xl rounded-full animate-pulse" />
-                    </div>
-                 </BentoCard>
-
-                 {/* Card 3: Standard (Brutal Feasibility) */}
-                 <BentoCard 
-                    title="Brutal Feasibility"
-                    desc="Reality checks against your timeline. No false promises."
-                    icon={<Zap className="w-6 h-6 text-black" />}
-                    delay={0.3}
-                    className="md:col-span-1 md:row-span-1 bg-white text-black border-transparent hover:scale-[1.02] transition-transform duration-500"
-                    iconClass="text-black bg-black/10"
-                    titleClass="text-black"
-                    descClass="text-zinc-600"
-                 />
-
-                 {/* Card 4: Standard (Global Reach) */}
-                 <BentoCard 
-                    title="Global Reach"
-                    desc="Remote-first opportunities prioritized for maximum leverage."
-                    icon={<Globe className="w-6 h-6 text-white" />}
-                    delay={0.5}
-                    className="md:col-span-1 md:row-span-1 bg-zinc-900/50"
-                 >
-                     <div className="absolute top-4 right-4 animate-pulse">
-                        <div className="w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_10px_#10b981]" />
-                     </div>
-                 </BentoCard>
-
-                 {/* Card 5: Wide Feature (Market Context) */}
-                 <BentoCard 
-                    title="Market Context"
-                    desc="Real-time salary data integrated into your decision matrix."
-                    icon={<Layers className="w-6 h-6 text-white" />}
-                    delay={0.4}
-                    className="md:col-span-2 md:row-span-1 bg-zinc-900/50"
-                 >
-                    <div className="absolute right-8 top-8 flex gap-2">
-                        <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[10px] text-emerald-500 font-mono flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                            MARKET: BULLISH
-                        </div>
-                    </div>
-                 </BentoCard>
-
-                  {/* Card 6: Wide Feature (Encrypted Core) */}
-                  <BentoCard 
-                    title="Encrypted Core"
-                    desc="Your career data is sensitive. We treat it like state secrets."
-                    icon={<Lock className="w-6 h-6 text-amber-500" />}
-                    delay={0.6}
-                    className="md:col-span-2 md:row-span-1 bg-zinc-900/50 border-zinc-800"
-                 >
-                    <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5" />
-                    <div className="absolute bottom-6 right-8 font-mono text-xs text-zinc-600 flex flex-col items-end">
-                        <span>AES-256-GCM</span>
-                        <span className="text-[10px] opacity-50">0x4F2A...9B1C</span>
-                    </div>
-                 </BentoCard>
-              </div>
-           </div>
+                            <div className="flex flex-col md:flex-row justify-between items-end mb-32 gap-8 border-b border-white/10 pb-12">
+                              <div className="space-y-2">
+                                  <div className="flex items-center gap-2 text-amber-500 font-mono text-xs uppercase tracking-widest mb-4">
+                                      <Activity className="w-4 h-4" /> Career Growth Engine
+                                  </div>
+                                  <motion.h2 
+                                      initial={{ opacity: 0, x: -20 }}
+                                      whileInView={{ opacity: 1, x: 0 }}
+                                      viewport={{ once: true }}
+                                      className="text-4xl md:text-7xl font-bold tracking-tighter uppercase font-sans"  
+                                  >
+                                      How It <span className="text-zinc-800 stroke-text">Works</span>
+                                  </motion.h2>
+                              </div>
+                              <div className="font-mono text-xs text-zinc-600 text-right space-y-1">
+                                 <div>[STATUS]: ONLINE</div>
+                                 <div>[UPTIME]: 99.99%</div>
+                                 <div>[USERS]: 14,000+</div>
+                              </div>
+                            </div>
+              
+                            <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[350px] gap-6">
+                               {/* Card 1: Large Feature (Real Job Data) */}
+                               <BentoCard
+                                  title="Real Job Data"
+                                  desc="We analyze thousands of tech job postings to find exactly what skills companies are hiring for right now."
+                                  icon={<Cpu className="w-6 h-6 text-white" />}
+                                  delay={0.1}
+                                  className="md:col-span-2 md:row-span-2 bg-zinc-900/30 border-zinc-800"
+                               >
+                                  {/* Visual Mockup: Skills Graph */}
+                                  <div className="absolute inset-0 z-0">
+                                      <div className="absolute bottom-0 left-0 right-0 h-3/4 flex items-end justify-between px-8 pb-8 gap-2 opacity-50">
+                                          {[40, 70, 45, 90, 60, 80, 50, 95, 30, 60].map((h, i) => (
+                                              <motion.div 
+                                                  key={i}
+                                                  initial={{ height: 0 }}
+                                                  whileInView={{ height: `${h}%` }}
+                                                  transition={{ duration: 1.5, delay: 0.2 + (i * 0.05), ease: "circOut" }}
+                                                  className="w-full bg-gradient-to-t from-zinc-800 to-zinc-600 hover:from-amber-600 hover:to-amber-400 transition-colors rounded-t-sm relative group"
+                                              >
+                                                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-[9px] opacity-0 group-hover:opacity-100 transition-opacity font-mono text-amber-500 bg-black/80 px-2 py-1 border border-amber-500/20 rounded">
+                                                      {h}%
+                                                  </div>
+                                              </motion.div>
+                                          ))}
+                                      </div>
+                                      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+                                  </div>
+                               </BentoCard>
+              
+                               {/* Card 2: Tall Feature (Personalized Schedule) */}
+                               <BentoCard
+                                  title="Personalized Schedule"
+                                  desc="Your roadmap adapts to your free time. Miss a week? We adjust the plan so you never fall behind."
+                                  icon={<Activity className="w-6 h-6 text-amber-500" />}
+                                  delay={0.2}
+                                  className="md:col-span-1 md:row-span-2 bg-zinc-950 border-amber-500/20"
+                               >
+                                  <div className="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
+                                       <div className="w-56 h-56 border border-dashed border-zinc-700 rounded-full animate-[spin_60s_linear_infinite]" />
+                                       <div className="absolute w-40 h-40 border-2 border-amber-500/20 rounded-full animate-[spin_20s_linear_infinite_reverse] border-t-amber-500" />
+                                       <div className="absolute w-24 h-24 bg-amber-500/10 blur-2xl rounded-full animate-pulse" />
+                                  </div>
+                               </BentoCard>
+              
+                               {/* Card 3: Standard (Realistic Goals) */}
+                               <BentoCard
+                                  title="Realistic Goals"
+                                  desc="No false promises. We give you a timeline you can actually achieve based on your starting point."
+                                  icon={<Zap className="w-6 h-6 text-black" />}
+                                  delay={0.3}
+                                  className="md:col-span-1 md:row-span-1 bg-white text-black border-transparent hover:scale-[1.02] transition-transform duration-500"
+                                  iconClass="text-black bg-black/10"
+                                  titleClass="text-black"
+                                  descClass="text-zinc-600"
+                               />
+              
+                               {/* Card 4: Standard (Remote Work Ready) */}
+                               <BentoCard
+                                  title="Remote Work Ready"
+                                  desc="Prioritize skills that are in high demand for remote and global tech opportunities."
+                                  icon={<Globe className="w-6 h-6 text-white" />}
+                                  delay={0.5}
+                                  className="md:col-span-1 md:row-span-1 bg-zinc-900/50"
+                               >
+                                   <div className="absolute top-4 right-4 animate-pulse">
+                                      <div className="w-2 h-2 bg-emerald-500 rounded-full shadow-[0_0_10px_#10b981]" />
+                                   </div>
+                               </BentoCard>
+              
+                               {/* Card 5: Wide Feature (Salary Insights) */}
+                               <BentoCard
+                                  title="Salary Insights"
+                                  desc="See real-time salary data for your target role so you know what you're worth."
+                                  icon={<Layers className="w-6 h-6 text-white" />}
+                                  delay={0.4}
+                                  className="md:col-span-2 md:row-span-1 bg-zinc-900/50"
+                               >
+                                  <div className="absolute right-8 top-8 flex gap-2">
+                                      <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[10px] text-emerald-500 font-mono flex items-center gap-2">
+                                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />   
+                                          MARKET: BULLISH
+                                      </div>
+                                  </div>
+                               </BentoCard>
+              
+                                {/* Card 6: Wide Feature (Private & Secure) */}
+                                <BentoCard
+                                  title="Private & Secure"
+                                  desc="Your career data is personal. We keep it safe and never share it without permission."
+                                  icon={<Lock className="w-6 h-6 text-amber-500" />}
+                                  delay={0.6}
+                                  className="md:col-span-2 md:row-span-1 bg-zinc-900/50 border-zinc-800"
+                               >
+                                  <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5" />
+                                  <div className="absolute bottom-6 right-8 font-mono text-xs text-zinc-600 flex flex-col items-end">
+                                      <span>AES-256-GCM</span>
+                                      <span className="text-[10px] opacity-50">0x4F2A...9B1C</span>
+                                  </div>
+                               </BentoCard>
+                            </div>           </div>
            
-           {/* CTA Section */}
-            <div className="py-40 border-t border-white/10 relative overflow-hidden bg-zinc-950">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03),transparent_70%)]" />
-                <div 
-                    className="absolute inset-0 opacity-10 mix-blend-soft-light"
-                    style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E")`,
-                    }} 
-                />
-                
-                <div className="max-w-5xl mx-auto text-center px-6 relative z-10">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                    >
-                        <h2 className="text-5xl md:text-9xl font-bold tracking-tighter mb-12 mix-blend-lighten text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-600">
-                            READY TO <span className="text-amber-500/90 block md:inline">EXECUTE?</span>
-                        </h2>
-                        <p className="text-xl md:text-2xl text-zinc-400 mb-16 max-w-2xl mx-auto font-light">
-                            The market waits for no one. Initialize your career operating system today.
-                        </p>
-                        <Link href="/register">
-                            <Button data-cursor="emerald" size="lg" className="h-20 px-16 bg-white text-black hover:bg-amber-400 hover:text-black text-xl font-bold tracking-[0.2em] uppercase transition-all duration-300 shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:shadow-[0_0_80px_rgba(251,191,36,0.3)] rounded-full">
-                                Create Account
-                            </Button>
-                        </Link>
-                    </motion.div>
-                </div>
-            </div>
-
-           {/* Footer */}
-           <footer className="border-t border-white/10 bg-black py-24 px-6 sm:px-12 relative z-20">
-              <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
-                 <div className="space-y-8">
-                    <div className="flex items-center gap-3 font-mono text-2xl font-bold tracking-tighter text-white">
-                      <div className="w-8 h-8 bg-zinc-800 rounded-sm flex items-center justify-center border border-zinc-700">
-                        <Disc className="w-5 h-5 animate-[spin_10s_linear_infinite]" />
-                      </div>
-                      <span>PATH_OS</span>
-                    </div>
-                    <p className="text-zinc-500 max-w-xs text-sm leading-relaxed">
-                       Designed for engineers who value execution over theory. <br/>
-                       London // New York // Tokyo
-                    </p>
-                    <div className="text-[10px] text-zinc-700 font-mono pt-4 border-t border-white/5 w-fit">
-                        © 2026 PathOS INC. // SYSTEM ID: 882-1
-                    </div>
-                 </div>
-                 
+                      {/* CTA Section */}
+                       <div className="py-40 border-t border-white/10 relative overflow-hidden bg-zinc-950">        
+                           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03),transparent_70%)]" />
+                           <div 
+                               className="absolute inset-0 opacity-10 mix-blend-soft-light"
+                               style={{
+                                   backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E")`,
+                               }} 
+                           />
+           
+                           <div className="max-w-5xl mx-auto text-center px-6 relative z-10">
+                               <motion.div
+                                   initial={{ opacity: 0, y: 30 }}
+                                   whileInView={{ opacity: 1, y: 0 }}
+                                   viewport={{ once: true }}
+                               >
+                                   <h2 className="text-5xl md:text-9xl font-bold tracking-tighter mb-12 mix-blend-lighten text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-600">
+                                       START YOUR <span className="text-amber-500/90 block md:inline">JOURNEY</span> 
+                                   </h2>
+                                   <p className="text-xl md:text-2xl text-zinc-400 mb-16 max-w-2xl mx-auto font-light">
+                                       Don't wait. Create your free account and get your custom AI career roadmap today.
+                                   </p>
+                                   <Link href="/register">
+                                       <Button data-cursor="emerald" size="lg" className="h-20 px-16 bg-white text-black hover:bg-amber-400 hover:text-black text-xl font-bold tracking-[0.2em] uppercase transition-all duration-300 shadow-[0_0_50px_rgba(255,255,255,0.1)] hover:shadow-[0_0_80px_rgba(251,191,36,0.3)] rounded-full">
+                                           Join for Free
+                                       </Button>
+                                   </Link>
+                               </motion.div>
+                           </div>
+                       </div>
+           
+                      {/* Footer */}
+                      <footer className="border-t border-white/10 bg-black py-24 px-6 sm:px-12 relative z-20">      
+                         <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
+                            <div className="space-y-8">
+                               <div className="flex items-center gap-3 font-mono text-2xl font-bold tracking-tighter text-white">
+                                 <div className="w-8 h-8 bg-zinc-800 rounded-sm flex items-center justify-center border border-zinc-700">
+                                   <Disc className="w-5 h-5 animate-[spin_10s_linear_infinite]" />
+                                 </div>
+                                 <span>PATH_OS</span>
+                               </div>
+                               <p className="text-zinc-500 max-w-xs text-sm leading-relaxed">
+                                  Your personal AI career coach. <br/>
+                                  Helping you land your dream tech job.
+                               </p>
+                               <div className="text-[10px] text-zinc-700 font-mono pt-4 border-t border-white/5 w-fit">
+                                   © 2026 PathOS INC. // SYSTEM ID: 882-1
+                               </div>
+                            </div>                 
                                   <div className="grid grid-cols-2 md:grid-cols-4 gap-16 text-sm font-mono text-zinc-500 uppercase tracking-widest">
                  
                                      <div className="flex flex-col gap-4">
