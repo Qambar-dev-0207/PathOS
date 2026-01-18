@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { API_BASE_URL } from "@/lib/config";
 import { ArrowLeft, UserPlus, Users, Check, X, ExternalLink, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,10 +50,10 @@ export default function NetworkPage() {
   const fetchData = async (token: string) => {
       try {
         const [friendsRes, requestsRes] = await Promise.all([
-            fetch("http://localhost:8002/friends", {
+            fetch(`${API_BASE_URL}/friends`, {
                 headers: { Authorization: `Bearer ${token}` }
             }),
-            fetch("http://localhost:8002/friends/requests", {
+            fetch(`${API_BASE_URL}/friends/requests`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
         ]);
@@ -79,7 +80,7 @@ export default function NetworkPage() {
     if (!token) return;
 
     try {
-        await fetch(`http://localhost:8002/friends/accept/${requesterId}`, {
+        await fetch(`${API_BASE_URL}/friends/accept/${requesterId}`, {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` }
         });
@@ -97,7 +98,7 @@ export default function NetworkPage() {
     setSearchResult(null);
 
     try {
-        const res = await fetch(`http://localhost:8002/public/profile/${searchId}`);
+        const res = await fetch(`${API_BASE_URL}/public/profile/${searchId}`);
         if (!res.ok) throw new Error("Operator not found");
         const data = await res.json();
         setSearchResult(data);
@@ -114,7 +115,7 @@ export default function NetworkPage() {
       if (!token) return;
 
       try {
-          const res = await fetch(`http://localhost:8002/friends/request/${searchId}`, {
+          const res = await fetch(`${API_BASE_URL}/friends/request/${searchId}`, {
               method: "POST",
               headers: { Authorization: `Bearer ${token}` }
           });

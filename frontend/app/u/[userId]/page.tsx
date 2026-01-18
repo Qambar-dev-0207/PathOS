@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/config";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, Disc, Share2, CheckCircle, Circle, Trophy, UserPlus } from "lucide-react";
@@ -35,7 +36,7 @@ export default function PublicProfilePage() {
     if (!userId) return;
 
     // 1. Fetch Profile Data
-    fetch(`http://localhost:8002/public/profile/${userId}`)
+    fetch(`${API_BASE_URL}/public/profile/${userId}`)
       .then(async (res) => {
         if (!res.ok) throw new Error("Operator not found");
         return res.json();
@@ -61,9 +62,9 @@ export default function PublicProfilePage() {
       try {
           // Get Me, Friends, Requests
           const [meRes, friendsRes, reqRes] = await Promise.all([
-              fetch("http://localhost:8002/auth/me", { headers: { Authorization: `Bearer ${token}` } }),
-              fetch("http://localhost:8002/friends", { headers: { Authorization: `Bearer ${token}` } }),
-              fetch("http://localhost:8002/friends/requests", { headers: { Authorization: `Bearer ${token}` } }),
+              fetch(`${API_BASE_URL}/auth/me`, { headers: { Authorization: `Bearer ${token}` } }),
+              fetch(`${API_BASE_URL}/friends`, { headers: { Authorization: `Bearer ${token}` } }),
+              fetch(`${API_BASE_URL}/friends/requests`, { headers: { Authorization: `Bearer ${token}` } }),
           ]);
 
           if (meRes.ok && friendsRes.ok && reqRes.ok) {
@@ -100,9 +101,9 @@ export default function PublicProfilePage() {
     try {
         let url = "";
         if (friendStatus === 'none') {
-            url = `http://localhost:8002/friends/request/${userId}`;
+            url = `${API_BASE_URL}/friends/request/${userId}`;
         } else if (friendStatus === 'received') {
-            url = `http://localhost:8002/friends/accept/${userId}`;
+            url = `${API_BASE_URL}/friends/accept/${userId}`;
         }
 
         if (url) {

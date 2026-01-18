@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, ArrowLeft, Disc, Command, User, Shield, Terminal, Activity, Zap, LogOut, Users } from "lucide-react";
@@ -83,7 +84,7 @@ export default function ProfilePage() {
 
             try {
                 console.log("Fetching /auth/me...");
-                const userRes = await fetch("http://localhost:8002/auth/me", {
+                const userRes = await fetch(`${API_BASE_URL}/auth/me`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 
@@ -99,7 +100,7 @@ export default function ProfilePage() {
                 const userData = await userRes.json();
                 setUser(userData);
 
-                const roadmapRes = await fetch("http://localhost:8002/roadmap", {
+                const roadmapRes = await fetch(`${API_BASE_URL}/roadmap`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
 
@@ -401,9 +402,9 @@ function OnboardingWizard() {
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), 120000); 
 
-      const response = await fetch("http://localhost:8002/generate-roadmap", {
+      const response = await fetch(`${API_BASE_URL}/generate-roadmap`, {
         method: "POST",
-        headers: { 
+        headers: {  
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}` 
         },

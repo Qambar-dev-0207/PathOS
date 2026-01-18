@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/config";
 import { useState } from "react";
 import { ArrowLeft, Disc, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,7 @@ export default function LoginPage() {
     setLoading(true);
     
     try {
-      const response = await fetch("http://localhost:8002/login", {
+      const response = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/config";
 import { useState } from "react";
 import { ArrowLeft, Disc, UserPlus, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:8002/register", {
+      const response = await fetch(`${API_BASE_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

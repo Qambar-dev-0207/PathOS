@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle2, RefreshCw, ArrowUpRight, Target, Clock, Terminal, Search, BrainCircuit, X, Check, AlertCircle, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -58,7 +59,7 @@ export default function RoadmapPage() {
       }
 
       try {
-        const userRes = await fetch("http://localhost:8002/auth/me", {
+        const userRes = await fetch(`${API_BASE_URL}/auth/me`, {
             headers: { "Authorization": `Bearer ${token}` }
         });
 
@@ -73,7 +74,7 @@ export default function RoadmapPage() {
             setUser(await userRes.json());
         }
 
-        const res = await fetch("http://localhost:8002/roadmap", {
+        const res = await fetch(`${API_BASE_URL}/roadmap`, {
           headers: { "Authorization": `Bearer ${token}` }
         });
         
@@ -141,7 +142,7 @@ export default function RoadmapPage() {
 
     try {
         const token = localStorage.getItem("accessToken");
-        const res = await fetch("http://localhost:8002/generate-quiz", {
+        const res = await fetch(`${API_BASE_URL}/generate-quiz`, {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
@@ -214,9 +215,9 @@ export default function RoadmapPage() {
 
     const token = localStorage.getItem("accessToken");
     try {
-        await fetch("http://localhost:8002/roadmap/progress", {
+        await fetch(`${API_BASE_URL}/roadmap/progress`, {
             method: "PUT",
-            headers: { 
+            headers: {  
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
