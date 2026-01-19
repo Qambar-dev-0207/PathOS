@@ -592,10 +592,10 @@ async def generate_roadmap(profile: UserProfile, current_user: dict = Depends(ge
             }}
             """
             
-            log_debug(f"Sending prompt to OpenRouter (xiaomi/mimo-v2-flash:free)...")
+            log_debug(f"Sending prompt to OpenRouter (nvidia/nemotron-3-nano-30b-a3b:free)...")
             
             completion = or_client.chat.completions.create(
-                model="xiaomi/mimo-v2-flash:free", 
+                model="nvidia/nemotron-3-nano-30b-a3b:free", 
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
@@ -830,7 +830,7 @@ async def generate_quiz(request: QuizRequest, current_user: dict = Depends(get_c
         )
         
         completion = or_client.chat.completions.create(
-            model="xiaomi/mimo-v2-flash:free", 
+            model="nvidia/nemotron-3-nano-30b-a3b:free", 
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}

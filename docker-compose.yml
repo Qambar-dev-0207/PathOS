@@ -16,6 +16,8 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8002
     container_name: pathos_frontend
     ports:
       - "3000:3000"

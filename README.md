@@ -54,7 +54,7 @@ PathOS operates on a "Signal-over-Noise" philosophy. It strips away the ambiguit
 
 ### Backend (The Engine)
 - **Framework**: FastAPI (Python 3.10+)
-- **AI**: OpenRouter (xiaomi/mimo-v2-flash:free) with Gemini-2.0 fallbacks
+- **AI**: OpenRouter (nvidia/nemotron-3-nano-30b-a3b:free) with Gemini-2.0 fallbacks
 - **Database**: MongoDB Atlas (Production) / Mock DB (Development)
 - **Search**: DuckDuckGo Search API for resource enrichment
 
